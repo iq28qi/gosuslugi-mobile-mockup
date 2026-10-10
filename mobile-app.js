@@ -3,15 +3,15 @@
     const serviceGroups = [
       ['Популярные услуги', 'heart'], ['Здоровье', 'health'], ['Справки Выписки', 'folder'],
       ['Пенсии Пособия', 'pension'], ['Транспорт Права', 'car'], ['Семья', 'family'],
-      ['Образование', 'book'], ['Регистрация Паспорт', 'passport'], ['Штрафы Налоги', 'ruble'],
-      ['Земля Дом', 'home-icon'], ['Прочее', 'grid'], ['Ведомства', 'permit']
+      ['Образование', 'book'], ['Регистрация Паспорт', 'passport'], ['Штрафы Налоги', 'justice'],
+      ['Земля Дом', 'home-icon'], ['Прочее', 'grid'], ['Ведомства', 'agencies']
     ];
     const documentGroups = [
       ['Личные документы', 'passport'], ['Семья и дети', 'family'], ['Транспорт', 'car'],
       ['Здоровье', 'health'], ['Недвижимость', 'home-icon'], ['Работа и пенсия', 'sign'],
       ['Образование', 'book'], ['Льготы и выплаты', 'pension'], ['Доходы и налоги', 'ruble'],
-      ['Нотариальные документы', 'file'], ['Правопорядок', 'justice'], ['Интеллектуальные права', 'check'],
-      ['Карта болельщика Билеты', 'card'], ['Оружие', 'permit'], ['Цифровой архив', 'archive']
+      ['Нотариальные документы', 'file'], ['Правопорядок', 'justice'], ['Интеллектуальные права', 'copyright'],
+      ['Карта болельщика Билеты', 'fan'], ['Оружие', 'weapon'], ['Цифровой архив', 'archive']
     ];
     const profileGroups = [
       ['Сим-карты', 'sim'], ['Банковские карты и счета', 'card'], ['Электронная подпись', 'sign'],
@@ -46,9 +46,9 @@
     const notificationData = [
       { type: 'новости', date: '02.10 в 19:53', title: 'Поздравьте учителя', source: 'Госуслуги', text: 'Выберите тёплые слова и поздравьте вашего учителя с профессиональным праздником.' },
       { type: 'госпочта', date: '02.10 в 14:50', title: 'С днём рождения, Димитрий Александрович!', source: 'Портал Госуслуг', text: 'Поздравляем с днём рождения! Желаем здоровья, счастья и исполнения желаний.' },
-      { type: 'новости', date: '26.09 в 04:05', title: 'Поддержите сборную России по футболу', source: 'Госуслуги', text: 'Новость показана как пример уведомления в интерактивном макете.' },
-      { type: 'документы', date: '19.09 в 04:49', title: 'Протоколы консультаций', source: 'Добавлен новый медицинский документ', medical: true, text: 'В макете нет медицинских записей. Это пример карточки уведомления.' },
-      { type: 'документы', date: '18.09 в 18:26', title: 'Протоколы консультаций', source: 'Добавлен новый медицинский документ', medical: true, text: 'В макете нет медицинских записей. Это пример карточки уведомления.' },
+      { type: 'новости', date: '26.09 в 04:05', title: 'Поддержите сборную России по футболу', source: 'Госуслуги', text: 'Поддержите сборную России и следите за новостями команды.' },
+      { type: 'документы', date: '19.09 в 04:49', title: 'Протоколы консультаций', source: 'Добавлен новый медицинский документ', medical: true, text: 'Просмотр медицинских документов пока недоступен.' },
+      { type: 'документы', date: '18.09 в 18:26', title: 'Протоколы консультаций', source: 'Добавлен новый медицинский документ', medical: true, text: 'Просмотр медицинских документов пока недоступен.' },
       { type: 'новости', date: '30.07 в 14:53', title: 'Опрос по подготовке к ЕГЭ', source: 'Госуслуги', text: 'Пример новости об образовании.' },
       { type: 'новости', date: '28.07 в 09:54', title: 'Сохраните безопасный доступ к важным сайтам', source: 'Госуслуги', text: 'Пример информационного уведомления.' },
       { type: 'новости', date: '24.07 в 17:08', title: 'Стартует Чемпионат болельщиков', source: 'Госуслуги', text: 'Пример новости для болельщиков.' },
@@ -56,7 +56,10 @@
       { type: 'новости', date: '07.07 в 20:57', title: 'Воспользуйтесь сервисом подбора колледжей', source: 'Госуслуги', text: 'Пример новости о поступлении в колледж.' }
     ].map(item => ({ ...item, read: false }));
 
+    const referenceMenuIcons = REFERENCE_MENU_ICONS;
     function uiIcon(name, className = '') {
+      const source = referenceMenuIcons['menu' + name];
+      if (source) return '<img class="menu-icon ' + className + '" src="' + source + '" alt="" aria-hidden="true">';
       const nativeIds = ['home-icon', 'grid', 'file', 'bell', 'wallet'];
       return '<svg class="' + className + '" aria-hidden="true"><use href="#' + (nativeIds.includes(name) ? name : 'icon-' + name) + '"/></svg>';
     }
@@ -78,12 +81,12 @@
       navigate(id, true);
     }
     function openTab(id) {
-      navigate(id);
+      navigate(id, false, 'tab');
       history.replaceState({ screen: id }, '');
     }
     function goBack() {
       if (history.state?.screen === currentScreen && !['home', 'pin', 'splash'].includes(currentScreen)) history.back();
-      else navigate(uiParents[currentScreen] || 'home');
+      else navigate(uiParents[currentScreen] || 'home', false, 'back');
     }
     function services() { openTab('servicesScreen'); }
     function documents() { openTab('documentsScreen'); }
@@ -112,7 +115,7 @@
         'Культура': 'Кино, музеи и театры',
         'Карта болельщика': 'Билеты и карта болельщика'
       };
-      modal(name, '<p>' + descriptions[name] + '</p><p>Демонстрационный раздел. Внешние приложения в этом макете не подключены.</p>');
+      modal(name, '<p>' + descriptions[name] + '</p><p>Открытие внешнего приложения пока недоступно.</p>');
     }
     function chooseRegion() {
       modal('Местоположение', '<p>Ваш регион</p><select class="region-input" id="regionChoice" aria-label="Регион"><option>Первоуральск г</option><option>Екатеринбург г</option><option>Москва г</option></select><button class="sheet-btn-primary" id="saveRegion">Выбрать</button>');
@@ -129,7 +132,7 @@
     }
     function profileSetting(name) {
       if (name === 'Безопасность') {
-        modal(name, '<p>Настройки экрана входа в макет</p><button class="sheet-btn-primary" onclick="navigate(\'pin\')">Экран ввода кода</button><button class="sheet-btn-primary" onclick="replaySplash()">Экран загрузки</button>');
+        modal(name, '<p>Настройки экрана входа</p><button class="sheet-btn-primary" onclick="navigate(\'pin\')">Экран ввода кода</button><button class="sheet-btn-primary" onclick="replaySplash()">Экран загрузки</button>');
       } else if (name === 'Настройки уведомлений' || name === 'Настройки госпочты') {
         const key = name === 'Настройки уведомлений' ? 'push' : 'mail';
         modal(name, '<div class="setting-option"><span>' + (key === 'push' ? 'Показывать уведомления' : 'Показывать госпочту') + '</span><button class="switch-control" id="settingSwitch" aria-label="' + name + '" aria-pressed="' + localSettings[key] + '"><span></span></button></div>');
@@ -137,13 +140,14 @@
       } else if (name === 'Тема оформления') {
         modal(name, '<p>Тёмная тема, как на предоставленных скриншотах.</p><button class="sheet-btn-primary" onclick="closeModal()">Готово</button>');
       } else if (name === 'О приложении' || name === 'Помощь и поддержка') {
-        modal(name, '<p>Госуслуги · интерактивный мобильный макет</p><p>Демонстрационный проект. Цифры кода, сообщения и выбранные файлы не отправляются на сервер.</p><p><a style="color:#008dff" href="https://github.com/iq28qi/gosuslugi-mobile-mockup" target="_blank" rel="noopener">Исходный код проекта</a></p>');
+        modal(name, '<p>Госуслуги · демонстрационная версия</p><p>Не является официальным сервисом. Цифры кода, сообщения и выбранные файлы не отправляются на сервер.</p><p><a style="color:#008dff" href="https://github.com/iq28qi/gosuslugi-mobile-mockup" target="_blank" rel="noopener">Исходный код проекта</a></p>');
       } else if (name === 'Отделения и МФЦ') {
         openCategory(name);
       } else service(name);
     }
 
     function setPaymentTab(historyTab) {
+      $('paymentsScreen').classList.toggle('is-history', historyTab);
       $('paymentsDueTab').setAttribute('aria-selected', String(!historyTab));
       $('paymentsHistoryTab').setAttribute('aria-selected', String(historyTab));
       $('paymentEmptyTitle').textContent = historyTab ? 'Пока здесь ничего нет' : 'Ничего не найдено';
@@ -153,13 +157,13 @@
       document.querySelector('.payments-data').hidden = historyTab;
     }
     function paymentData() {
-      modal('Данные для поиска начислений', '<div class="detail-row"><span>ФИО</span><span>Тимофеев Димитрий Александрович</span></div><div class="detail-row"><span>Дата рождения</span><span>02.10.2008</span></div><p>Макет. Поиск реальных задолженностей не выполняется.</p><button class="sheet-btn-primary" onclick="openPassportDetails()">Паспорт РФ</button>');
+      modal('Данные для поиска начислений', '<div class="detail-row"><span>ФИО</span><span>Тимофеев Димитрий Александрович</span></div><div class="detail-row"><span>Дата рождения</span><span>02.10.2008</span></div><p>Поиск начислений пока недоступен.</p><button class="sheet-btn-primary" onclick="openPassportDetails()">Паспорт РФ</button>');
     }
     function paymentByDetails() {
-      modal('Оплата по реквизитам или QR-коду', '<p>Это демонстрационный экран. Платежи в макете не выполняются.</p><button class="sheet-btn-primary" onclick="closeModal()">Понятно</button>');
+      modal('Оплата по реквизитам или QR-коду', '<p>Оплата пока недоступна.</p><button class="sheet-btn-primary" onclick="closeModal()">Понятно</button>');
     }
     function passportActions() {
-      modal('Паспорт РФ', '<button class="sheet-btn-primary" onclick="copyAllPassportData()">Скопировать все данные</button><button class="sheet-btn-primary" onclick="shareDocument()">Поделиться данными макета</button>');
+      modal('Паспорт РФ', '<button class="sheet-btn-primary" onclick="copyAllPassportData()">Скопировать все данные</button><button class="sheet-btn-primary" onclick="shareDocument()">Поделиться данными</button>');
     }
 
     function newsBanner(orange) {
@@ -203,7 +207,7 @@
       const item = notificationData[index];
       if (!item.read) { item.read = true; unreadTotal = Math.max(0, unreadTotal - 1); }
       const article = $('notificationArticle');
-      article.innerHTML = '<span class="notification-metadata"></span><h1></h1><p></p><p class="mockup-note">Демонстрационное уведомление</p>';
+      article.innerHTML = '<span class="notification-metadata"></span><h1></h1><p></p>';
       article.querySelector('span').textContent = item.type + ' · ' + item.date;
       article.querySelector('h1').textContent = item.title;
       article.querySelector('p').textContent = item.text;
@@ -241,8 +245,8 @@
         action.onclick = openPassport;
         reply.append(action);
       } else if (query.includes('врач') || query.includes('здоров')) {
-        reply.textContent = 'Откройте раздел «Здоровье», чтобы посмотреть доступные услуги макета.';
-      } else if (query.includes('привет')) reply.textContent = 'Здравствуйте, Димитрий! В макете доступны документы, услуги и уведомления.';
+        reply.textContent = 'Откройте раздел «Здоровье», чтобы посмотреть доступные услуги.';
+      } else if (query.includes('привет')) reply.textContent = 'Здравствуйте, Димитрий! Здесь доступны документы, услуги и уведомления.';
       else reply.textContent = 'Попробуйте задать вопрос иначе';
       list.append(reply);
       $('assistantInput').value = '';
@@ -262,10 +266,16 @@
     markAllButton.onclick = markAllRead;
     $('phone').append(markAllButton);
     window.updateScreenChrome = id => {
+      $('phone').classList.toggle('profile-scrolled', id === 'profileScreen' && $('profileScreen').scrollTop > 8);
       markAllButton.style.display = id === 'notificationsScreen' ? 'block' : 'none';
       markAllButton.inert = id !== 'notificationsScreen';
       if (id === 'assistantScreen') requestAnimationFrame(() => $('assistantMessages').scrollTo({ top: 0 }));
     };
+    $('profileScreen').addEventListener('scroll', () => {
+      const scrolled = $('profileScreen').scrollTop > 8;
+      $('profileScreen').classList.toggle('is-scrolled', scrolled);
+      if (currentScreen === 'profileScreen') $('phone').classList.toggle('profile-scrolled', scrolled);
+    }, { passive: true });
 
     $('assistantForm').addEventListener('submit', event => { event.preventDefault(); sendAssistantMessage($('assistantInput').value); });
     $('documentAttachment').addEventListener('change', event => {
@@ -320,12 +330,90 @@
     function updateDeviceTime() { const date = new Date(); $('deviceTime').textContent = date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); }
     updateDeviceTime();
     setInterval(updateDeviceTime, 30000);
+    let viewportFrame = 0;
+    let tallestViewport = window.visualViewport?.height || innerHeight;
+    let viewportWidth = innerWidth;
     function resizeForKeyboard() {
-      if (nativeDevice && window.visualViewport?.scale === 1) {
-        $('phone').style.height = window.visualViewport.height + 'px';
-        $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
-      }
+      cancelAnimationFrame(viewportFrame);
+      viewportFrame = requestAnimationFrame(() => {
+        const viewport = window.visualViewport;
+        if (!nativeDevice || !viewport || Math.abs(viewport.scale - 1) > .01) return;
+        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = viewport.height; viewportWidth = innerWidth; }
+        tallestViewport = Math.max(tallestViewport, viewport.height);
+        const editing = document.activeElement?.matches('input:not([type="file"]), textarea');
+        const keyboard = Boolean(editing && tallestViewport - viewport.height > 100);
+        const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
+        $('phone').classList.toggle('keyboard-open', keyboard);
+        $('phone').style.height = Math.round(viewport.height) + 'px';
+        if (keyboard && changed && currentScreen === 'assistantScreen') $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
+      });
     }
     window.visualViewport?.addEventListener('resize', resizeForKeyboard);
+    document.addEventListener('focusin', resizeForKeyboard);
+    document.addEventListener('focusout', resizeForKeyboard);
     window.addEventListener('orientationchange', () => setTimeout(resizeForKeyboard, 200));
     resizeForKeyboard();
+
+    // Only transform and opacity animate; layout stays stable on mobile GPUs.
+    const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+    const runningMotion = new Set();
+    function stopScreenMotion() {
+      for (const record of [...runningMotion]) record.animation.cancel();
+    }
+    function playMotion(element, frames, options, className) {
+      if (className) element.classList.add(className);
+      const animation = element.animate(frames, options);
+      const record = { animation, element };
+      runningMotion.add(record);
+      const clean = () => {
+        animation.onfinish = animation.oncancel = null;
+        if (className) element.classList.remove(className);
+        runningMotion.delete(record);
+        animation.cancel();
+      };
+      animation.onfinish = animation.oncancel = clean;
+      return animation;
+    }
+    window.animateScreenChange = (previous, next, direction) => {
+      stopScreenMotion();
+      if (previous === next || motionPreference.matches || !Element.prototype.animate) return;
+      const incoming = $(next), outgoing = $(previous);
+      const options = { duration: 390, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+      let start = { transform: 'translate3d(100%,0,0)', opacity: 1 };
+      let end = { transform: 'translate3d(-18%,0,0)', opacity: .5 };
+      if (direction === 'back') {
+        start = { transform: 'translate3d(-18%,0,0)', opacity: .65 };
+        end = { transform: 'translate3d(100%,0,0)', opacity: 1 };
+      } else if (direction === 'tab' || ['splash','pin'].includes(previous) || ['splash','pin'].includes(next)) {
+        start = { transform: 'translate3d(0,10px,0)', opacity: 0 };
+        end = { transform: 'translate3d(0,-5px,0)', opacity: 0 };
+        options.duration = 280;
+      }
+      if (next === 'catalogScreen') start = { transform: 'translate3d(0,100%,0)', opacity: 1 };
+      if (previous === 'catalogScreen') { start = { transform: 'translate3d(0,-8px,0)', opacity: .8 }; end = { transform: 'translate3d(0,100%,0)', opacity: 1 }; }
+      const rest = { transform: 'translate3d(0,0,0)', opacity: 1 };
+      if (outgoing) playMotion(outgoing, [rest, end], options, 'motion-out');
+      playMotion(incoming, [start, rest], options, 'motion-in');
+      incoming.classList.toggle('motion-back', direction === 'back');
+      if (direction !== 'back') {
+        const cards = [...incoming.querySelectorAll('.balance-card, .dashboard-panel, .menu-row, .catalog-card, .profile-summary, .notification-row, .news-banner')];
+        const limit = $('phone').getBoundingClientRect().bottom - (incoming.classList.contains('tab-screen') ? 60 : 0);
+        cards.filter(card => card.getBoundingClientRect().top < limit).slice(0, 7).forEach((card, index) => {
+          playMotion(card, [{ transform: 'translate3d(0,9px,0)', opacity: .3 }, rest], { duration: 240, delay: 35 + index * 25, easing: options.easing, fill: 'backwards' });
+        });
+      }
+    };
+    motionPreference.addEventListener?.('change', stopScreenMotion);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopScreenMotion(); });
+
+    let edgeGesture = null;
+    document.querySelector('main').addEventListener('pointerdown', event => {
+      const screen = event.target.closest('.screen.active');
+      if (!screen || screen.classList.contains('tab-screen') || ['splash','pin','document'].includes(screen.id) || $('phone').classList.contains('modal-open')) return;
+      if (event.clientX - $('phone').getBoundingClientRect().left <= 28) edgeGesture = { x: event.clientX, y: event.clientY, screen: screen.id };
+    }, { passive: true });
+    document.querySelector('main').addEventListener('pointerup', event => {
+      const gesture = edgeGesture; edgeGesture = null;
+      if (gesture && gesture.screen === currentScreen && event.clientX - gesture.x > 72 && Math.abs(event.clientY - gesture.y) < 55) goBack();
+    }, { passive: true });
+    document.querySelector('main').addEventListener('pointercancel', () => edgeGesture = null);

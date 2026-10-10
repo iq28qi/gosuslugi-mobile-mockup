@@ -33,13 +33,13 @@ let html = `<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Госуслуги">
+  <meta name="apple-mobile-web-app-title" content="Госуслуги · Демо">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Мобильное приложение Госуслуги — интерактивный макет">
-  <title>Госуслуги · мобильный макет</title>
+  <meta name="description" content="Демонстрационная версия мобильного интерфейса Госуслуг">
+  <title>Госуслуги · Демо</title>
   <link rel="icon" type="image/png" href="icon-180.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -1089,7 +1089,7 @@ let html = `<!doctype html>
             <span class="pin-dot"></span>
             <span class="pin-dot"></span>
           </div>
-          <p class="pin-hint">Макет · любые четыре цифры</p>
+          <p class="pin-hint">Для входа — любые четыре цифры</p>
         </div>
         <div class="pin-keypad" id="keypad"></div>
       </section>
@@ -1267,7 +1267,7 @@ let html = `<!doctype html>
 
         <div class="doc-bottom-actions">
           <button class="details-text-btn" onclick="openPassportDetails()">детали документа</button>
-          <p class="doc-disclaimer">Макет · не является документом</p>
+          <p class="doc-disclaimer">Не является документом</p>
         </div>
       </section>
     </main>
@@ -1337,7 +1337,7 @@ let html = `<!doctype html>
     const $ = id => document.getElementById(id);
 
     // Navigation with smooth transitions
-    function navigate(id, push = false) {
+    function navigate(id, push = false, direction = 'forward') {
       if (!$(id)?.classList.contains('screen')) return;
       const previous = currentScreen;
       closeModal();
@@ -1375,6 +1375,7 @@ let html = `<!doctype html>
       $(id).setAttribute('tabindex', '-1');
       $(id).focus({ preventScroll: true });
       window.updateScreenChrome?.(id);
+      window.animateScreenChange?.(previous, id, direction);
     }
 
     function openPassport() {
@@ -1386,13 +1387,13 @@ let html = `<!doctype html>
 
     function closePassport() {
       if (history.state?.screen === 'document') history.back();
-      else navigate(window.passportReturnScreen || 'home');
+      else navigate(window.passportReturnScreen || 'home', false, 'back');
     }
 
     window.addEventListener('popstate', event => {
       const target = event.state?.screen;
-      if (target && $(target)?.classList.contains('screen')) navigate(target);
-      else if (!['splash', 'pin'].includes(currentScreen)) navigate('home');
+      if (target && $(target)?.classList.contains('screen')) navigate(target, false, 'back');
+      else if (!['splash', 'pin'].includes(currentScreen)) navigate('home', false, 'back');
     });
 
     // Skip Splash screen
@@ -1488,7 +1489,7 @@ let html = `<!doctype html>
 
     // Copy full passport data
     async function copyAllPassportData() {
-      const text = \`Макет · не является документом
+      const text = \`Демонстрационные данные · не является документом
 Паспорт РФ
 Серия и номер: 6523 854155
 Кем выдан: ГУ МВД РОССИИ ПО СВЕРДЛОВСКОЙ ОБЛАСТИ
@@ -1498,15 +1499,15 @@ let html = `<!doctype html>
 Пол: МУЖСКОЙ
 Дата рождения: 02.10.2008
 Место рождения: СВЕРДЛОВСКАЯ ОБЛ, Г ПЕРВОУРАЛЬСК\`;
-      showToast(await copyText(text) ? 'Данные макета скопированы' : 'Не удалось скопировать данные');
+      showToast(await copyText(text) ? 'Данные скопированы' : 'Не удалось скопировать данные');
       closeModal();
     }
 
     function shareDocument() {
       if (navigator.share) {
         navigator.share({
-          title: 'Паспорт РФ · макет',
-          text: 'Макет · не является документом. ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ, Дата рождения: 02.10.2008, Паспорт: 6523 854155'
+          title: 'Паспорт РФ · демонстрационные данные',
+          text: 'Не является документом. ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ, Дата рождения: 02.10.2008, Паспорт: 6523 854155'
         }).catch(() => {});
       } else {
         copyAllPassportData();
@@ -1573,7 +1574,7 @@ let html = `<!doctype html>
 
     // Services modals
     function service(name) {
-      modal(name, '<p>Этот раздел показан в интерактивном макете приложения. Подача заявлений и получение данных не подключены.</p>');
+      modal(name, '<p>Подача заявлений и получение данных пока недоступны.</p>');
     }
 
     function documents() {
@@ -1684,6 +1685,10 @@ html = html.replace('</style>', fs.readFileSync('mobile-ui.css', 'utf8') + '\n  
 html = html.replace('    <!-- Main Screens View -->', fs.readFileSync('status-bar.html', 'utf8') + '\n    <!-- Main Screens View -->');
 html = html.replace('    </main>', additionalScreens + '\n    </main>');
 const storyAssets = Object.fromEntries(Object.entries(referenceAssets).filter(([key]) => key.startsWith('story')));
-html = html.replace('  </script>', fs.readFileSync('mobile-app.js', 'utf8').replace('REFERENCE_STORY_ASSETS', JSON.stringify(storyAssets)) + '\n  </script>');
+const menuAssets = Object.fromEntries(Object.entries(referenceAssets).filter(([key]) => key.startsWith('menu')));
+const appScript = fs.readFileSync('mobile-app.js', 'utf8')
+  .replace('REFERENCE_STORY_ASSETS', JSON.stringify(storyAssets))
+  .replace('REFERENCE_MENU_ICONS', JSON.stringify(menuAssets));
+html = html.replace('  </script>', appScript + '\n  </script>');
 fs.writeFileSync('index.html', html, 'utf8');
 console.log('Successfully generated updated index.html! File size:', html.length);

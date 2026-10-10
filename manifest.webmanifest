@@ -1,6 +1,6 @@
 {
-  "name": "Мобильный макет",
-  "short_name": "Макет",
+  "name": "Госуслуги · Демо",
+  "short_name": "Госуслуги · Демо",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

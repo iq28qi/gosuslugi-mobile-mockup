@@ -1,6 +1,7 @@
 /* App screens at the reference's logical resolution: 414 × 896.
    On real phones the operating system supplies the status and gesture bars. */
 :root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 #phone { max-width: 520px; }
 .extra-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -16,7 +17,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .status-battery { width: 26px; height: 14px; position: relative; border-radius: 4px; background: #83848c; color: #000; font-size: 12px; line-height: 14px; font-weight: 700; }
 .status-battery span { display: block; height: 14px; width: 20px; background: white; border-radius: 4px 0 0 4px; padding-left: 3px; }
 .status-battery::after { content: ''; width: 2px; height: 5px; background: #83848c; position: absolute; right: -3px; top: 4px; border-radius: 0 2px 2px 0; }
-.screen { padding-top: 0; background: #000; touch-action: pan-y; }
+.screen { padding-top: 0; background: #000; touch-action: pan-y; transition: none; transform: none; opacity: 0; visibility: hidden; z-index: 0; }
+.screen.active { transition: none; transform: none; opacity: 1; visibility: visible; z-index: 1; }
+.screen.motion-in, .screen.motion-out { visibility: visible; will-change: transform, opacity; }
+.screen.motion-in { z-index: 3; }
+.screen.motion-out { z-index: 2; pointer-events: none; }
+.screen.motion-in.motion-back { z-index: 1; }
+button { transition: transform .24s cubic-bezier(.2,.8,.2,1), opacity .2s ease, background-color .2s ease; }
+button:active { transform: scale(.975); opacity: .82; }
+.grid-item:active, .story-card:active, .bottom-nav button:active { transform: scale(.93); }
+.bottom-nav button svg { transition: color .24s ease; }
+.bottom-nav button.selected svg { animation: nav-selection .32s cubic-bezier(.2,.8,.2,1); }
+@keyframes nav-selection { from { transform: translateY(3px) scale(.88); } to { transform: translateY(0) scale(1); } }
+.chat-message { animation: message-arrival .28s cubic-bezier(.22,1,.36,1); }
+@keyframes message-arrival { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.pin-dot { transition: background-color .2s ease, transform .25s cubic-bezier(.2,.8,.2,1); }
+.pin-dot.on { animation: pin-dot-pop .24s ease-out; }
+@keyframes pin-dot-pop { 0% { transform: scale(.7); } 65% { transform: scale(1.14); } 100% { transform: scale(1); } }
+.sheet-backdrop { transition: opacity .26s ease, visibility 0s .42s; }
+.sheet-backdrop.open { transition: opacity .26s ease, visibility 0s; }
+.sheet-card { transition: transform .42s cubic-bezier(.22,1,.36,1); }
 #phone.app-unlocked .vpn-banner { display: none; }
 #phone[data-screen="document"] .vpn-banner { display: none; }
 #phone.has-navigation .home-bar { display: block; }
@@ -40,6 +60,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .page-toolbar > button:last-child { justify-content: flex-end; }
 .page-toolbar .toolbar-link { color: var(--blue); font-size: 14px; white-space: nowrap; justify-content: flex-end; }
 .large-title { font-size: 34px; line-height: 41px; font-weight: 700; color: #fff; margin: 44px 20px 21px; letter-spacing: -.7px; }
+.documents-screen .large-title { position: sticky; top: 0; z-index: 5; background: #000; margin: 0; padding: 44px 20px 21px; }
+.profile-screen.is-scrolled .page-toolbar, #phone.profile-scrolled .app-status-bar { background: #151515; }
+.profile-screen.is-scrolled .page-toolbar { border-bottom: 1px solid #363638; }
 .home-screen { background: linear-gradient(180deg, #030811, #04132e 48%, #000 89%); padding-bottom: calc(var(--nav-height) + 16px); }
 .home-header { height: 56px; padding: 0 16px 12px; }
 .home-header .name-btn { font-size: 18px; font-weight: 600; line-height: 22px; gap: 8px; }
@@ -80,8 +103,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .menu-list { margin: 0 8px; display: flex; flex-direction: column; gap: 8px; }
 .menu-row { display: flex; align-items: center; gap: 13px; width: 100%; min-height: 64px; padding: 18px 20px; background: var(--panel); border-radius: 12px; text-align: left; }
 .menu-row > svg:first-child { width: 20px; height: 22px; color: var(--blue); flex-shrink: 0; stroke-width: 1.7; }
+.menu-row > .menu-icon { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
 .menu-row strong { flex: 1; min-width: 0; font-weight: 600; font-size: 18px; line-height: 23px; letter-spacing: -.45px; overflow-wrap: anywhere; }
-.menu-row .row-chevron { width: 13px; height: 17px; color: #8692a7; flex-shrink: 0; }
+.menu-row .row-chevron { width: 20px; height: 20px; color: #8692a7; flex-shrink: 0; }
 .services-list { gap: 8px; }
 .documents-panel { margin: 0 8px 28px; min-height: 157px; padding: 21px 20px 18px; background: #303038; }
 .documents-panel h2 { margin-bottom: 16px; }
@@ -111,8 +135,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .attachment-row a { color: var(--blue); flex: 1; overflow-wrap: anywhere; }
 .attachment-row button { color: #96a3b7; font-size: 24px; width: 36px; height: 36px; }
 .full-width-primary { margin: 16px 8px 0; width: calc(100% - 16px); border-radius: 13px; background: var(--blue); color: #fff; padding: 17px; font-size: 16px; }
-.catalog-screen { border-radius: 16px 16px 0 0; padding-top: 9px; transform: translate3d(0, 60px, 0); }
-.catalog-screen.active { transform: translate3d(0, 0, 0); }
+.catalog-screen { border-radius: 16px 16px 0 0; padding-top: 9px; }
 .catalog-handle { width: 53px; height: 4px; border-radius: 3px; background: #333; margin: 5px auto 15px; }
 .catalog-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 16px 19px; }
 .catalog-heading h1 { font-size: 20px; line-height: 25px; margin: 0; font-weight: 600; }
@@ -134,6 +157,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .segmented-control button { font-size: 14px; border-radius: 8px; min-width: 0; }
 .segmented-control button[aria-selected="true"] { background: #59595f; font-weight: 500; }
 .payment-empty { padding: 57px 16px 0; text-align: center; }
+.payments-screen.is-history .payment-empty { padding-top: 77px; }
 .payment-empty > img { width: 226px; height: 204px; max-width: 80%; object-fit: contain; display: block; margin: auto; }
 .payment-empty h2 { color: #fff; font-size: 20px; line-height: 24px; font-weight: 700; margin: 17px 0 12px; letter-spacing: -.3px; }
 .payment-empty p { color: #96a3b8; font-size: 14px; line-height: 17px; margin: 0; }
@@ -200,6 +224,13 @@ body.native-device .home-bar { display: none !important; }
 @media (min-width: 500px) and (max-width: 599px) { body { display: block; padding: 0; background: #000; } #phone { width: 100%; max-width: none; border-radius: 0; box-shadow: none; } }
 body.native-device { display: block; padding: 0; background: #000; }
 body.native-device #phone { width: 100%; max-width: none; height: 100dvh; border-radius: 0; box-shadow: none; }
+body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; }
+body.native-device #document { padding-top: env(safe-area-inset-top, 0px); padding-bottom: max(40px, env(safe-area-inset-bottom, 0px)); }
+body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8px; }
+.passport-details-screen .mockup-note { user-select: text; }
+.profile-list .menu-row:last-child { margin-top: 16px; }
+.profile-list .menu-row:last-child > .menu-icon, .profile-list .menu-row:last-child > svg:first-child { display: none; }
 @media (max-width: 374px) {
   .home-header { padding-inline: 12px; }
   .home-header .name-btn { font-size: 16px; gap: 5px; }
@@ -225,6 +256,7 @@ body.native-device #phone { width: 100%; max-width: none; height: 100dvh; border
   .catalog-card-title button { font-size: 12px; }
   .catalog-card p { font-size: 13px; line-height: 19px; }
   .large-title { margin-top: 30px; font-size: 31px; }
+  .documents-screen .large-title { margin: 0; padding-top: 30px; }
   .payment-empty { padding-top: 35px; }
   .payment-empty > img { width: 200px; height: 181px; }
   .payment-empty #paymentEmptyActions { margin-top: 18px; }
@@ -232,10 +264,13 @@ body.native-device #phone { width: 100%; max-width: none; height: 100dvh; border
 }
 @media (max-height: 650px) {
   .large-title { margin-top: 26px; }
+  .documents-screen .large-title { margin: 0; padding-top: 26px; }
   .payment-empty { padding-top: 16px; }
   .payment-empty > img { width: 150px; height: 136px; }
   .payment-empty h2 { margin-top: 13px; margin-bottom: 10px; }
   .payment-empty #paymentEmptyActions { margin-top: 16px; }
+  .payments-screen.is-history .payment-empty { padding-top: 26px; }
 }
 @media (max-height: 440px) { .app-status-bar { height: 28px; padding-top: 3px; } .payment-empty { padding-top: 20px; } .payment-empty > img { width: 160px; height: 145px; } .large-title { margin-top: 16px; } }
 @media (prefers-reduced-motion: reduce) { .switch-control span { transition: none; } }
+@media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }
