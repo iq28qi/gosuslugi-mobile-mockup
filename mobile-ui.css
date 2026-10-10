@@ -3,7 +3,7 @@
 :root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-#phone { max-width: 520px; }
+#phone { max-width: 520px; container-type: size; }
 .extra-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
 .app-status-bar { height: 54px; flex-shrink: 0; display: none; align-items: flex-start; padding: 16px 20px 0 22px; color: #fff; gap: 5px; position: relative; z-index: 70; background: #000; }
 #phone.app-unlocked .app-status-bar { display: flex; }
@@ -40,7 +40,7 @@ button:active { transform: scale(.975); opacity: .82; }
 #phone.app-unlocked .vpn-banner { display: none; }
 #phone[data-screen="document"] .vpn-banner { display: none; }
 #phone.has-navigation .home-bar { display: block; }
-.bottom-nav { height: var(--nav-height); padding: 9px 0 33px; background: linear-gradient(#141414, #101010); border-color: #27272b; }
+.bottom-nav { height: var(--nav-height); padding: 6px 0 33px; background: linear-gradient(#141414, #101010); border-color: #27272b; }
 .bottom-nav button { font-size: 12px; font-weight: 400; gap: 6px; }
 .bottom-nav svg { width: 21px; height: 21px; }
 .bottom-nav .assistant-tab img { width: 42px; height: 44px; margin-top: -4px; }
@@ -73,7 +73,7 @@ button:active { transform: scale(.975); opacity: .82; }
 .headtools .goskan-badge { height: 21px; font-size: 11px; border: 1.5px dashed #ddd; border-radius: 5px; padding: 3px 5px !important; }
 .chips-row { padding: 0 16px; gap: 8px; }
 .chips-row button { height: 36px; font-size: 14px; font-weight: 400; padding: 8px 12px; }
-.stories-row { gap: 6px; padding: 20px 8px 0; height: 129px; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; touch-action: pan-x; }
+.stories-row { gap: 6px; padding: 20px 12px 0; height: 129px; scroll-snap-type: x mandatory; scroll-padding-inline: 12px; touch-action: pan-x; }
 .story-card { width: 106px; min-width: 106px; height: 109px; padding: 3px; border-radius: 18px; }
 .story-card:first-child { margin-left: 0; }
 .story-card img { object-fit: fill; border-radius: 14px; }
@@ -214,8 +214,8 @@ button:active { transform: scale(.975); opacity: .82; }
 .setting-option .switch-control { flex-shrink: 0; }
 .region-input { width: 100%; background: #171923; border: 1px solid #4a5468; border-radius: 12px; padding: 12px; color: #ddd; font: inherit; font-size: 16px; }
 #phone.modal-open .mark-all-control { visibility: hidden; }
-body.native-device { --nav-height: calc(64px + env(safe-area-inset-bottom, 0px)); }
-body.native-device #phone.app-unlocked .app-status-bar { height: env(safe-area-inset-top, 0px); padding: 0; }
+body.native-device { --nav-height: calc(50px + max(10px, env(safe-area-inset-bottom, 0px))); }
+body.native-device #phone.app-unlocked .app-status-bar { height: calc(10px + env(safe-area-inset-top, 0px)); padding: 0; }
 body.native-device .app-status-bar > * { display: none; }
 body.native-device .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
 body.native-device .assistant-composer { padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
@@ -223,9 +223,9 @@ body.native-device .home-bar { display: none !important; }
 @media (min-width: 600px) { #phone { max-width: none; width: 414px; border-radius: 36px; } }
 @media (min-width: 500px) and (max-width: 599px) { body { display: block; padding: 0; background: #000; } #phone { width: 100%; max-width: none; border-radius: 0; box-shadow: none; } }
 body.native-device { display: block; padding: 0; background: #000; }
-body.native-device #phone { position: absolute; top: var(--viewport-top, 0px); left: 0; margin: 0; width: 100%; max-width: none; height: var(--viewport-height, 100dvh); border-radius: 0; box-shadow: none; }
+body.native-device #phone { position: fixed; top: var(--viewport-top, 0px); left: 0; margin: 0; width: 100%; max-width: none; height: var(--viewport-height, 100dvh); border-radius: 0; box-shadow: none; }
 body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 8px; }
+body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 5px; }
 body.native-device #document { padding-top: 0; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
 body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8px; }
 .passport-details-screen .mockup-note { user-select: text; }
@@ -233,7 +233,7 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
 .profile-list .menu-row:last-child > .menu-icon, .profile-list .menu-row:last-child > svg:first-child { display: none; }
 .bottom-nav button { min-width: 0; min-height: 44px; }
 .bottom-nav button svg, .bottom-nav button img, .bottom-nav button span { flex-shrink: 0; }
-.doc-topbar { padding-inline: 12px; }
+.doc-topbar { position: sticky; top: 0; z-index: 5; height: 54px; padding: 0 12px 16px; background: #000; }
 .doc-topbar button { width: 44px; height: 44px; display: flex; align-items: center; }
 .doc-topbar button:last-child { justify-content: flex-end; }
 .passport-card { margin-inline: 8px; border-radius: 16px 16px 12px 12px; }
@@ -253,9 +253,12 @@ body.native-device .footer-primary { min-height: 60px; }
 .max-install-content p { color: #96a3b8; font-size: 14px; line-height: 20px; margin: 0 auto; max-width: 350px; }
 #phone { --pin-footer-height: 108px; }
 #phone.warning-dismissed { --pin-footer-height: 28px; }
-.pin-keypad { bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); }
-#phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
-.pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(15% - 54px), 90px)); }
+.pin-entry-box { top: 42%; }
+.pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(14.4% - 54px), 90px)); }
+.pin-avatar-circle { width: 32px; height: 32px; }
+.pin-keypad { top: 52.5%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); grid-template-rows: repeat(3, minmax(44px, 8.3cqh)) minmax(44px, 1fr); }
+.pin-keypad button:nth-last-child(-n+2) { align-self: end; height: min(64px, 8.3cqh); }
+#phone[data-screen="pin"] .vpn-banner { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 @media (max-width: 374px) {
   .home-header { padding-inline: 12px; }
   .home-header .name-btn { font-size: 16px; gap: 5px; }
@@ -296,11 +299,16 @@ body.native-device .footer-primary { min-height: 60px; }
   .payment-empty #paymentEmptyActions { margin-top: 16px; }
   .payments-screen.is-history .payment-empty { padding-top: 26px; }
 }
-@media (max-height: 750px) and (min-height: 561px) {
+@media (max-height: 800px) and (min-height: 561px) {
   .pin-entry-box { top: 31%; }
   .pin-entry-box h3 { margin-bottom: 12px; }
   .pin-hint { margin-top: 8px; }
   .pin-keypad { top: 44%; }
+}
+@media (max-height: 800px) {
+  .pin-keypad { bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); grid-template-rows: repeat(4, 1fr); }
+  .pin-keypad button:nth-last-child(-n+2) { height: 100%; align-self: stretch; }
+  #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-height: 560px) {
   .pin-profile { top: max(16px, env(safe-area-inset-top, 0px)); }

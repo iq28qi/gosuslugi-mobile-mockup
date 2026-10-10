@@ -329,8 +329,10 @@
     document.querySelector('.chips-row button:last-child').textContent = extraChips[0];
     for (const label of extraChips.slice(1)) { const chip = document.createElement('button'); chip.textContent = label; chip.onclick = () => service(label); document.querySelector('.chips-row').append(chip); }
 
-    const nativeDevice = /Android|iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const standaloneApp = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+    const nativeDevice = navigator.standalone === true || /Android|iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || (navigator.maxTouchPoints > 0 && matchMedia('(any-pointer: coarse)').matches);
     document.body.classList.toggle('native-device', nativeDevice);
+    document.body.classList.toggle('standalone-app', standaloneApp);
     function updateDeviceTime() { const date = new Date(); $('deviceTime').textContent = date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); }
     updateDeviceTime();
     setInterval(updateDeviceTime, 30000);
@@ -350,7 +352,8 @@
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
         $('phone').style.setProperty('--viewport-height', Math.floor(height) + 'px');
-        $('phone').style.setProperty('--viewport-top', (viewport?.offsetTop || 0) + 'px');
+        // Only keyboard panning moves the shell; ordinary app scrolling keeps it anchored.
+        $('phone').style.setProperty('--viewport-top', (keyboard ? viewport?.offsetTop || 0 : 0) + 'px');
         if (keyboard && changed && currentScreen === 'assistantScreen') $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
       });
     }
@@ -362,6 +365,33 @@
     document.addEventListener('focusout', resizeForKeyboard);
     window.addEventListener('orientationchange', () => setTimeout(resizeForKeyboard, 200));
     resizeForKeyboard();
+
+    let checkingAppVersion = false;
+    async function refreshInstalledApp() {
+      if (!standaloneApp || checkingAppVersion || document.visibilityState === 'hidden') return;
+      checkingAppVersion = true;
+      try {
+        const versionUrl = new URL('app-version.json', document.baseURI);
+        versionUrl.searchParams.set('t', String(Date.now()));
+        const response = await fetch(versionUrl, { cache: 'no-store' });
+        if (!response.ok) return;
+        const { revision } = await response.json();
+        const current = document.querySelector('meta[name="app-revision"]')?.content;
+        const url = new URL(location.href);
+        if (!/^[a-f0-9]{12}$/.test(revision) || !current || revision === current || url.searchParams.get('v') === revision) return;
+        // Preserve a session while typing or attaching files; update on the next app launch.
+        if (document.activeElement?.matches('input, textarea') || attachmentUrls.size) return;
+        url.searchParams.set('v', revision);
+        location.replace(url.href);
+      } catch {
+        // Offline launches keep the current screen usable.
+      } finally {
+        checkingAppVersion = false;
+      }
+    }
+    window.addEventListener('pageshow', refreshInstalledApp);
+    document.addEventListener('visibilitychange', refreshInstalledApp);
+    refreshInstalledApp();
 
     // Only transform and opacity animate; layout stays stable on mobile GPUs.
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');

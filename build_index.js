@@ -1265,9 +1265,6 @@ let html = `<!doctype html>
           </div>
         </article>
 
-        <div class="doc-bottom-actions">
-          <button class="details-text-btn" onclick="openPassportDetails()">детали документа</button>
-        </div>
       </section>
     </main>
 
@@ -1696,5 +1693,8 @@ const appScript = fs.readFileSync('mobile-app.js', 'utf8')
   .replace('REFERENCE_STORY_ASSETS', JSON.stringify(storyAssets))
   .replace('REFERENCE_MENU_ICONS', JSON.stringify(menuAssets));
 html = html.replace('  </script>', appScript + '\n  </script>');
+const revision = require('node:crypto').createHash('sha256').update(html).digest('hex').slice(0, 12);
+html = html.replace('</head>', '<meta name="app-revision" content="' + revision + '">\n</head>');
 fs.writeFileSync('index.html', html, 'utf8');
+fs.writeFileSync('app-version.json', JSON.stringify({ revision }) + '\n', 'utf8');
 console.log('Successfully generated updated index.html! File size:', html.length);
