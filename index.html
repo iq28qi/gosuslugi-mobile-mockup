@@ -1188,6 +1188,10 @@ body.native-device { --nav-height: calc(50px + max(10px, env(safe-area-inset-bot
 body.native-device #phone.app-unlocked .app-status-bar { height: calc(10px + env(safe-area-inset-top, 0px)); padding: 0; }
 body.native-device .app-status-bar > * { display: none; }
 body.native-device .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+/* Home-screen installation: keep the menu compact instead of reserving a 34px blank strip. */
+body.native-device.standalone-app { --nav-height: 58px; }
+body.native-device.standalone-app .bottom-nav { padding-bottom: 8px; }
+body.native-device.standalone-app .bottom-nav button { line-height: 12px; gap: 4px; }
 body.native-device .assistant-composer { padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 body.native-device .home-bar { display: none !important; }
 @media (min-width: 600px) { #phone { max-width: none; width: 414px; border-radius: 36px; } }
@@ -1311,7 +1315,7 @@ body.native-device .footer-primary { min-height: 60px; }
 @media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }
 
   </style>
-<meta name="app-revision" content="e81d91947eee">
+<meta name="app-revision" content="09cb5c181864">
 </head>
 <body>
   <!-- Global Symbols -->
