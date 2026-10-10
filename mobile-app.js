@@ -337,7 +337,7 @@
     updateDeviceTime();
     setInterval(updateDeviceTime, 30000);
     let viewportFrame = 0;
-    let tallestViewport = window.visualViewport?.height || innerHeight;
+    let tallestViewport = Math.max(window.visualViewport?.height || 0, innerHeight);
     let viewportWidth = innerWidth;
     function resizeForKeyboard() {
       cancelAnimationFrame(viewportFrame);
@@ -345,13 +345,16 @@
         const viewport = window.visualViewport;
         if (!nativeDevice || (viewport && Math.abs(viewport.scale - 1) > .01)) return;
         const height = viewport?.height || innerHeight;
-        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = height; viewportWidth = innerWidth; }
-        tallestViewport = Math.max(tallestViewport, height);
+        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = Math.max(height, innerHeight); viewportWidth = innerWidth; }
+        tallestViewport = Math.max(tallestViewport, height, innerHeight);
         const editing = document.activeElement?.matches('input:not([type="file"]), textarea');
         const keyboard = Boolean(editing && tallestViewport - height > 100);
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
-        $('phone').style.setProperty('--viewport-height', Math.floor(height) + 'px');
+        // iOS can retain a shorter visual viewport after the keyboard or app switch.
+        // Outside keyboard input, a home-screen app fills its CSS viewport instead.
+        if (standaloneApp && !keyboard) $('phone').style.removeProperty('--viewport-height');
+        else $('phone').style.setProperty('--viewport-height', Math.floor(height) + 'px');
         // Only keyboard panning moves the shell; ordinary app scrolling keeps it anchored.
         $('phone').style.setProperty('--viewport-top', (keyboard ? viewport?.offsetTop || 0 : 0) + 'px');
         if (keyboard && changed && currentScreen === 'assistantScreen') $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
