@@ -1232,7 +1232,7 @@ let html = `<!doctype html>
                 <div class="field-label">Кем выдан</div>
                 <div class="field-val">ГУ МВД РОССИИ ПО СВЕРДЛОВСКОЙ ОБЛАСТИ</div>
 
-                <div class="passport-cols-2" style="margin-top:4px;">
+                <div class="passport-cols-2">
                   <div>
                     <div class="field-label">Дата выдачи</div>
                     <div class="field-val field-val-large">20.10.2023</div>
@@ -1250,10 +1250,10 @@ let html = `<!doctype html>
               <div class="field-label">ФИО</div>
               <div class="name-val">ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ</div>
 
-              <div class="passport-cols-2" style="margin-top:6px;">
+              <div class="passport-cols-2">
                 <div>
                   <div class="field-label">Пол</div>
-                  <div class="field-val field-val-large">МУЖСКОЙ</div>
+                  <div class="field-val field-val-large">М</div>
                 </div>
                 <div>
                   <div class="field-label">Дата рождения</div>
@@ -1261,7 +1261,7 @@ let html = `<!doctype html>
                 </div>
               </div>
 
-              <div class="field-label" style="margin-top:8px;">Место рождения</div>
+              <div class="field-label birthplace-label">Место рождения</div>
               <div class="field-val field-val-large">СВЕРДЛОВСКАЯ ОБЛ, Г ПЕРВОУРАЛЬСК</div>
 
               <button class="card-internal-link" onclick="openPassportDetails()">детали документа</button>
@@ -1278,7 +1278,8 @@ let html = `<!doctype html>
     </div>
 
     <div class="screen-footer document-footer">
-      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
+      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-document-qr"/></svg>Предъявить в MAX</button>
+      <div class="document-vpn-warning" role="status"><span class="vpn-alert-badge">!</span><span>Возможно, у вас подключён VPN. Отключите его, если возникают проблемы при работе приложения</span><button class="vpn-close-btn" aria-label="Закрыть уведомление о VPN" onclick="dismissDocumentWarning()">×</button></div>
     </div>
     <div class="screen-footer max-footer">
       <a class="footer-primary" href="https://download.max.ru/" target="_blank" rel="noopener noreferrer">Установить</a>

@@ -1208,7 +1208,7 @@ body.native-device.standalone-app #phone { position: absolute; top: 0; bottom: a
 body.native-device.standalone-app #phone.keyboard-open { position: fixed; top: var(--viewport-top, 0px); bottom: auto; height: var(--viewport-height, 100vh); }
 body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 5px; }
-body.native-device #document { padding-top: 0; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+body.native-device #document { padding-top: 0; padding-bottom: calc(160px + env(safe-area-inset-bottom, 0px)); }
 body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8px; }
 .passport-details-screen .mockup-note { user-select: text; }
 .profile-list .menu-row:last-child { margin-top: 16px; }
@@ -1218,13 +1218,35 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
 .doc-topbar { position: sticky; top: 0; z-index: 5; height: 54px; padding: 0 12px 16px; background: #000; }
 .doc-topbar button { width: 44px; height: 44px; display: flex; align-items: center; }
 .doc-topbar button:last-child { justify-content: flex-end; }
-.passport-card { margin-inline: 8px; border-radius: 16px 16px 12px 12px; }
-.passport-top-fields, .passport-bottom-fields { min-width: 0; }
+.doc-topbar h2 { font-size: 16px; font-weight: 600; }
+.passport-card { margin-inline: 8px; border-radius: 16px 16px 12px 12px; container-type: inline-size; --passport-unit: clamp(.75px, calc((100vw - 16px) / 398), 1px); }
+@supports (width: 1cqw) { .passport-card { --passport-unit: clamp(.75px, calc(100cqw / 398), 1px); } }
+.passport-header-bar { height: calc(42 * var(--passport-unit)); padding: 0 10px; display: flex; justify-content: center; align-items: center; font-family: 'Times New Roman', serif; font-size: calc(14 * var(--passport-unit)); line-height: 18px; letter-spacing: 0; }
+.passport-body { grid-template-columns: 33% minmax(0, 1fr); column-gap: calc(16 * var(--passport-unit)); padding: calc(20 * var(--passport-unit)) calc(20 * var(--passport-unit)) calc(19 * var(--passport-unit)); }
+.passport-photo-box { border-radius: calc(12 * var(--passport-unit)); }
+.passport-bottom-fields { margin-top: calc(12 * var(--passport-unit)); }
+.passport-card .series-num-wrap { gap: calc(9 * var(--passport-unit)); margin-bottom: calc(8 * var(--passport-unit)); }
+.passport-card .series-num-val { font-size: calc(19 * var(--passport-unit)); line-height: calc(23 * var(--passport-unit)); }
+.passport-card .copy-icon-btn svg { width: calc(20 * var(--passport-unit)); height: calc(20 * var(--passport-unit)); }
+.passport-card .field-label { font-size: calc(11 * var(--passport-unit)); line-height: calc(13 * var(--passport-unit)); margin: calc(12 * var(--passport-unit)) 0 calc(3 * var(--passport-unit)); letter-spacing: .1px; }
+.passport-card .field-val, .passport-card .name-val, .passport-card .birth-date-val { font-size: calc(13 * var(--passport-unit)); line-height: calc(16 * var(--passport-unit)); letter-spacing: .1px; }
+.passport-card .passport-cols-2 { gap: calc(12 * var(--passport-unit)); margin-top: 0; }
+.passport-card .passport-top-fields > .field-label, .passport-card .passport-bottom-fields > .field-label:first-child { margin-top: 0; }
+.passport-card .passport-bottom-fields > .field-label:first-child { margin-bottom: calc(5 * var(--passport-unit)); }
+.passport-card .passport-bottom-fields .passport-cols-2 .field-label { margin-top: calc(11 * var(--passport-unit)); margin-bottom: calc(4 * var(--passport-unit)); }
+.passport-card .passport-bottom-fields > .birthplace-label { margin-top: calc(11 * var(--passport-unit)); margin-bottom: calc(5 * var(--passport-unit)); }
+.passport-card .card-internal-link { font-size: calc(14 * var(--passport-unit)); line-height: calc(20 * var(--passport-unit)); margin-top: calc(12 * var(--passport-unit)); }
+.passport-photo-box, .passport-top-fields, .passport-bottom-fields { position: relative; z-index: 2; min-width: 0; }
 .document-screen { padding-bottom: 110px; }
 .screen-footer { display: block; position: absolute; bottom: 0; left: 0; right: 0; z-index: 45; padding: 12px 8px 34px; background: #000; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .18s linear, visibility 0s .18s; }
 #phone[data-screen="document"] .document-footer, #phone[data-screen="maxInstallScreen"] .max-footer { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .footer-primary { display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 60px; width: 100%; padding: 14px 12px; border-radius: 13px; background: var(--blue); color: #fff; font-size: 16px; line-height: 22px; text-decoration: none; text-align: center; }
 .footer-primary svg { width: 22px; height: 22px; flex-shrink: 0; }
+.document-vpn-warning { position: absolute; bottom: calc(100% - 26px); left: 8px; right: 8px; display: flex; align-items: flex-start; gap: 9px; min-height: 64px; padding: 15px 16px; border-radius: 12px; background: #414b60; color: #fff; font-size: 12px; line-height: 1.35; font-weight: 400; transition: opacity .2s var(--motion-fade), visibility 0s .2s; }
+.document-vpn-warning > span:nth-child(2) { flex: 1; min-width: 0; }
+.document-vpn-warning .vpn-close-btn { align-self: flex-start; margin-top: -7px; }
+.document-vpn-warning.dismissed { opacity: 0; visibility: hidden; pointer-events: none; }
+@media (max-width: 390px) { .document-vpn-warning { min-height: 58px; padding: 13px 12px; font-size: 11px; gap: 8px; } }
 body.native-device .screen-footer { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 body.native-device .footer-primary { min-height: 60px; }
 #phone.modal-open .screen-footer { visibility: hidden; }
@@ -1329,7 +1351,7 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
 @media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }
 
   </style>
-<meta name="app-revision" content="fa66a71fca5e">
+<meta name="app-revision" content="cfd0cf2a0e61">
 </head>
 <body>
   <!-- Global Symbols -->
@@ -1592,7 +1614,7 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
                 <div class="field-label">Кем выдан</div>
                 <div class="field-val">ГУ МВД РОССИИ ПО СВЕРДЛОВСКОЙ ОБЛАСТИ</div>
 
-                <div class="passport-cols-2" style="margin-top:4px;">
+                <div class="passport-cols-2">
                   <div>
                     <div class="field-label">Дата выдачи</div>
                     <div class="field-val field-val-large">20.10.2023</div>
@@ -1610,10 +1632,10 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
               <div class="field-label">ФИО</div>
               <div class="name-val">ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ</div>
 
-              <div class="passport-cols-2" style="margin-top:6px;">
+              <div class="passport-cols-2">
                 <div>
                   <div class="field-label">Пол</div>
-                  <div class="field-val field-val-large">МУЖСКОЙ</div>
+                  <div class="field-val field-val-large">М</div>
                 </div>
                 <div>
                   <div class="field-label">Дата рождения</div>
@@ -1621,7 +1643,7 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
                 </div>
               </div>
 
-              <div class="field-label" style="margin-top:8px;">Место рождения</div>
+              <div class="field-label birthplace-label">Место рождения</div>
               <div class="field-val field-val-large">СВЕРДЛОВСКАЯ ОБЛ, Г ПЕРВОУРАЛЬСК</div>
 
               <button class="card-internal-link" onclick="openPassportDetails()">детали документа</button>
@@ -1658,6 +1680,7 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
         <symbol id="icon-ruble" viewBox="0 0 24 24"><path d="M7 23V2h7q10 0 7 7q-1 4-14 4H3M3 18h12"/></symbol>
         <symbol id="icon-archive" viewBox="0 0 24 24"><path d="M2 4h20v17H2ZM1 1h22v5H1M9 10h6"/></symbol>
         <symbol id="icon-more" viewBox="0 0 24 24"><circle cx="12" cy="4" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="20" r="1"/></symbol>
+        <symbol id="icon-document-qr" viewBox="0 0 24 24"><path d="M7 3H3v4m14-4h4v4M3 17v4h4m14-4v4h-4"/><text x="12" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="currentColor" stroke="none">QR</text></symbol>
       </defs></svg>
 
       <section id="servicesScreen" class="screen tab-screen services-screen" aria-label="Услуги">
@@ -1764,7 +1787,8 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
     </div>
 
     <div class="screen-footer document-footer">
-      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
+      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-document-qr"/></svg>Предъявить в MAX</button>
+      <div class="document-vpn-warning" role="status"><span class="vpn-alert-badge">!</span><span>Возможно, у вас подключён VPN. Отключите его, если возникают проблемы при работе приложения</span><button class="vpn-close-btn" aria-label="Закрыть уведомление о VPN" onclick="dismissDocumentWarning()">×</button></div>
     </div>
     <div class="screen-footer max-footer">
       <a class="footer-primary" href="https://download.max.ru/" target="_blank" rel="noopener noreferrer">Установить</a>
@@ -2268,6 +2292,13 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
     function openAssistant() { openScreen('assistantScreen'); }
     function openPassportDetails() { openScreen('passportDetails'); }
     function openMaxInstall() { openScreen('maxInstallScreen'); }
+    function dismissDocumentWarning() {
+      const warning = document.querySelector('.document-vpn-warning');
+      warning.classList.add('dismissed');
+      warning.inert = true;
+      warning.setAttribute('aria-hidden', 'true');
+      document.querySelector('.document-footer .footer-primary').focus({ preventScroll: true });
+    }
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
@@ -2388,7 +2419,10 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
     function newsBanner(orange) {
       const button = document.createElement('button');
       button.className = 'news-banner' + (orange ? ' orange-banner' : '');
-      button.innerHTML = '<strong>' + (orange ? 'Госуслуги для новых регионов' : 'Меры поддержки<br>для защитников Отечества') + '</strong><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m30 4 8 18 22 1-17 14 6 22-19-12-19 12 6-22L1 23l22-1z"/><path d="m4 40-3 19 16-4M47 17l14-7v24l-9 4"/></svg>';
+      const artwork = orange
+        ? '<path d="M8 12 34 2v56L8 47ZM34 16h21v43H34M13 21l14-6v31l-14-6ZM24 28v9"/>'
+        : '<path d="m30 4 8 18 22 1-17 14 6 22-19-12-19 12 6-22L1 23l22-1z"/><path d="m4 40-3 19 16-4M47 17l14-7v24l-9 4"/>';
+      button.innerHTML = '<strong>' + (orange ? 'Госуслуги для новых регионов' : 'Меры поддержки<br>для защитников Отечества') + '</strong><svg viewBox="0 0 64 64" aria-hidden="true">' + artwork + '</svg>';
       button.onclick = () => service(orange ? 'Госуслуги для новых регионов' : 'Меры поддержки для защитников Отечества');
       return button;
     }

@@ -95,6 +95,13 @@
     function openAssistant() { openScreen('assistantScreen'); }
     function openPassportDetails() { openScreen('passportDetails'); }
     function openMaxInstall() { openScreen('maxInstallScreen'); }
+    function dismissDocumentWarning() {
+      const warning = document.querySelector('.document-vpn-warning');
+      warning.classList.add('dismissed');
+      warning.inert = true;
+      warning.setAttribute('aria-hidden', 'true');
+      document.querySelector('.document-footer .footer-primary').focus({ preventScroll: true });
+    }
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
@@ -215,7 +222,10 @@
     function newsBanner(orange) {
       const button = document.createElement('button');
       button.className = 'news-banner' + (orange ? ' orange-banner' : '');
-      button.innerHTML = '<strong>' + (orange ? 'Госуслуги для новых регионов' : 'Меры поддержки<br>для защитников Отечества') + '</strong><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m30 4 8 18 22 1-17 14 6 22-19-12-19 12 6-22L1 23l22-1z"/><path d="m4 40-3 19 16-4M47 17l14-7v24l-9 4"/></svg>';
+      const artwork = orange
+        ? '<path d="M8 12 34 2v56L8 47ZM34 16h21v43H34M13 21l14-6v31l-14-6ZM24 28v9"/>'
+        : '<path d="m30 4 8 18 22 1-17 14 6 22-19-12-19 12 6-22L1 23l22-1z"/><path d="m4 40-3 19 16-4M47 17l14-7v24l-9 4"/>';
+      button.innerHTML = '<strong>' + (orange ? 'Госуслуги для новых регионов' : 'Меры поддержки<br>для защитников Отечества') + '</strong><svg viewBox="0 0 64 64" aria-hidden="true">' + artwork + '</svg>';
       button.onclick = () => service(orange ? 'Госуслуги для новых регионов' : 'Меры поддержки для защитников Отечества');
       return button;
     }
