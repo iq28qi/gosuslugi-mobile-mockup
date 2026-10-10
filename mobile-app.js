@@ -94,6 +94,7 @@
     function showProfile() { openScreen('profileScreen'); }
     function openAssistant() { openScreen('assistantScreen'); }
     function openPassportDetails() { openScreen('passportDetails'); }
+    function openMaxInstall() { openScreen('maxInstallScreen'); }
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
@@ -340,18 +341,23 @@
       cancelAnimationFrame(viewportFrame);
       viewportFrame = requestAnimationFrame(() => {
         const viewport = window.visualViewport;
-        if (!nativeDevice || !viewport || Math.abs(viewport.scale - 1) > .01) return;
-        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = viewport.height; viewportWidth = innerWidth; }
-        tallestViewport = Math.max(tallestViewport, viewport.height);
+        if (!nativeDevice || (viewport && Math.abs(viewport.scale - 1) > .01)) return;
+        const height = viewport?.height || innerHeight;
+        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = height; viewportWidth = innerWidth; }
+        tallestViewport = Math.max(tallestViewport, height);
         const editing = document.activeElement?.matches('input:not([type="file"]), textarea');
-        const keyboard = Boolean(editing && tallestViewport - viewport.height > 100);
+        const keyboard = Boolean(editing && tallestViewport - height > 100);
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
-        $('phone').style.height = Math.round(viewport.height) + 'px';
+        $('phone').style.setProperty('--viewport-height', Math.floor(height) + 'px');
+        $('phone').style.setProperty('--viewport-top', (viewport?.offsetTop || 0) + 'px');
         if (keyboard && changed && currentScreen === 'assistantScreen') $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
       });
     }
     window.visualViewport?.addEventListener('resize', resizeForKeyboard);
+    window.visualViewport?.addEventListener('scroll', resizeForKeyboard);
+    window.addEventListener('resize', resizeForKeyboard);
+    window.addEventListener('pageshow', resizeForKeyboard);
     document.addEventListener('focusin', resizeForKeyboard);
     document.addEventListener('focusout', resizeForKeyboard);
     window.addEventListener('orientationchange', () => setTimeout(resizeForKeyboard, 200));

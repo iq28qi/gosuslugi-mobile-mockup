@@ -1043,9 +1043,9 @@ button:active { transform: scale(.975); opacity: .82; }
 .headtools .goskan-badge { height: 21px; font-size: 11px; border: 1.5px dashed #ddd; border-radius: 5px; padding: 3px 5px !important; }
 .chips-row { padding: 0 16px; gap: 8px; }
 .chips-row button { height: 36px; font-size: 14px; font-weight: 400; padding: 8px 12px; }
-.stories-row { gap: 6px; padding: 20px 0 0; height: 129px; scroll-snap-type: x mandatory; touch-action: pan-x; }
+.stories-row { gap: 6px; padding: 20px 8px 0; height: 129px; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; touch-action: pan-x; }
 .story-card { width: 106px; min-width: 106px; height: 109px; padding: 3px; border-radius: 18px; }
-.story-card:first-child { margin-left: -8px; }
+.story-card:first-child { margin-left: 0; }
 .story-card img { object-fit: fill; border-radius: 14px; }
 .story-card.seen { border-color: transparent; }
 .story-card:active { transform: scale(.96); }
@@ -1184,7 +1184,7 @@ button:active { transform: scale(.975); opacity: .82; }
 .setting-option .switch-control { flex-shrink: 0; }
 .region-input { width: 100%; background: #171923; border: 1px solid #4a5468; border-radius: 12px; padding: 12px; color: #ddd; font: inherit; font-size: 16px; }
 #phone.modal-open .mark-all-control { visibility: hidden; }
-body.native-device { --nav-height: calc(54px + env(safe-area-inset-bottom, 12px)); }
+body.native-device { --nav-height: calc(64px + env(safe-area-inset-bottom, 0px)); }
 body.native-device #phone.app-unlocked .app-status-bar { height: env(safe-area-inset-top, 0px); padding: 0; }
 body.native-device .app-status-bar > * { display: none; }
 body.native-device .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
@@ -1193,14 +1193,39 @@ body.native-device .home-bar { display: none !important; }
 @media (min-width: 600px) { #phone { max-width: none; width: 414px; border-radius: 36px; } }
 @media (min-width: 500px) and (max-width: 599px) { body { display: block; padding: 0; background: #000; } #phone { width: 100%; max-width: none; border-radius: 0; box-shadow: none; } }
 body.native-device { display: block; padding: 0; background: #000; }
-body.native-device #phone { width: 100%; max-width: none; height: 100dvh; border-radius: 0; box-shadow: none; }
+body.native-device #phone { position: absolute; top: var(--viewport-top, 0px); left: 0; margin: 0; width: 100%; max-width: none; height: var(--viewport-height, 100dvh); border-radius: 0; box-shadow: none; }
 body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; }
-body.native-device #document { padding-top: env(safe-area-inset-top, 0px); padding-bottom: max(40px, env(safe-area-inset-bottom, 0px)); }
+body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 8px; }
+body.native-device #document { padding-top: 0; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
 body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8px; }
 .passport-details-screen .mockup-note { user-select: text; }
 .profile-list .menu-row:last-child { margin-top: 16px; }
 .profile-list .menu-row:last-child > .menu-icon, .profile-list .menu-row:last-child > svg:first-child { display: none; }
+.bottom-nav button { min-width: 0; min-height: 44px; }
+.bottom-nav button svg, .bottom-nav button img, .bottom-nav button span { flex-shrink: 0; }
+.doc-topbar { padding-inline: 12px; }
+.doc-topbar button { width: 44px; height: 44px; display: flex; align-items: center; }
+.doc-topbar button:last-child { justify-content: flex-end; }
+.passport-card { margin-inline: 8px; border-radius: 16px 16px 12px 12px; }
+.passport-top-fields, .passport-bottom-fields { min-width: 0; }
+.document-screen { padding-bottom: 110px; }
+.screen-footer { display: none; position: absolute; bottom: 0; left: 0; right: 0; z-index: 45; padding: 12px 8px 34px; background: #000; }
+#phone[data-screen="document"] .document-footer, #phone[data-screen="maxInstallScreen"] .max-footer { display: block; }
+.footer-primary { display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 60px; width: 100%; padding: 14px 12px; border-radius: 13px; background: var(--blue); color: #fff; font-size: 16px; line-height: 22px; text-decoration: none; text-align: center; }
+.footer-primary svg { width: 22px; height: 22px; flex-shrink: 0; }
+body.native-device .screen-footer { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+body.native-device .footer-primary { min-height: 60px; }
+#phone.modal-open .screen-footer { visibility: hidden; }
+.max-install-screen { padding-bottom: 110px; }
+.max-install-content { text-align: center; padding: 30px 24px 24px; }
+.max-app-logo { display: block; width: 136px; height: 136px; margin: 0 auto 50px; }
+.max-install-content h1 { font-size: 20px; line-height: 26px; font-weight: 600; margin: 0 0 12px; }
+.max-install-content p { color: #96a3b8; font-size: 14px; line-height: 20px; margin: 0 auto; max-width: 350px; }
+#phone { --pin-footer-height: 108px; }
+#phone.warning-dismissed { --pin-footer-height: 28px; }
+.pin-keypad { bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); }
+#phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+.pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(15% - 54px), 90px)); }
 @media (max-width: 374px) {
   .home-header { padding-inline: 12px; }
   .home-header .name-btn { font-size: 16px; gap: 5px; }
@@ -1240,6 +1265,23 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
   .payment-empty h2 { margin-top: 13px; margin-bottom: 10px; }
   .payment-empty #paymentEmptyActions { margin-top: 16px; }
   .payments-screen.is-history .payment-empty { padding-top: 26px; }
+}
+@media (max-height: 750px) and (min-height: 561px) {
+  .pin-entry-box { top: 31%; }
+  .pin-entry-box h3 { margin-bottom: 12px; }
+  .pin-hint { margin-top: 8px; }
+  .pin-keypad { top: 44%; }
+}
+@media (max-height: 560px) {
+  .pin-profile { top: max(16px, env(safe-area-inset-top, 0px)); }
+  .pin-keypad { top: 41%; }
+  #phone { --pin-footer-height: 76px; }
+  .max-install-content { padding-top: 12px; }
+  .max-app-logo { width: 96px; height: 96px; margin-bottom: 24px; }
+}
+@media (max-height: 440px) {
+  .pin-profile { top: max(12%, env(safe-area-inset-top, 0px)); }
+  .pin-keypad { top: 8%; bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-height: 440px) { .app-status-bar { height: 28px; padding-top: 3px; } .payment-empty { padding-top: 20px; } .payment-empty > img { width: 160px; height: 145px; } .large-title { margin-top: 16px; } }
 @media (prefers-reduced-motion: reduce) { .switch-control span { transition: none; } }
@@ -1656,11 +1698,31 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
         <form id="assistantForm" class="assistant-composer"><input id="assistantInput" placeholder="Введите запрос..." aria-label="Сообщение роботу Максу" autocomplete="off"><button type="submit" aria-label="Отправить"><svg><use href="#icon-send"/></svg></button></form>
       </section>
 
+      <section id="maxInstallScreen" class="screen detail-screen max-install-screen" aria-label="Установка MAX">
+        <header class="page-toolbar"><button class="back-control" aria-label="Назад" onclick="goBack()"><svg><use href="#back"/></svg></button><span></span><span></span></header>
+        <div class="max-install-content">
+          <svg class="max-app-logo" viewBox="0 0 136 136" aria-hidden="true">
+            <defs><linearGradient id="max-logo-gradient" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#00aaff"/><stop offset=".45" stop-color="#315dff"/><stop offset="1" stop-color="#9b18e7"/></linearGradient></defs>
+            <rect width="136" height="136" rx="32" fill="url(#max-logo-gradient)" stroke="none"/>
+            <path d="M69 16C40 16 22 37 22 67c0 17 7 29 16 37l-3 17 20-12c5 2 10 3 15 3 29 0 46-22 46-48S98 16 69 16zm1 24c15 0 23 10 23 24s-9 24-24 24c-14 0-23-10-23-24s9-24 24-24z" fill="#fff" stroke="none" fill-rule="evenodd"/>
+          </svg>
+          <h1>Установите приложение MAX</h1>
+          <p>В нём вы сможете предъявлять документы<br>и подтверждать свою личность</p>
+        </div>
+      </section>
+
       <section id="categoryScreen" class="screen detail-screen category-screen" aria-label="Категория услуг">
         <header class="page-toolbar"><button class="back-control" aria-label="Назад" onclick="goBack()"><svg><use href="#back"/></svg></button><h2 id="categoryTitle">Услуги</h2><span></span></header><div id="categoryItems" class="menu-list"></div>
       </section>
 
     </main>
+
+    <div class="screen-footer document-footer">
+      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
+    </div>
+    <div class="screen-footer max-footer">
+      <a class="footer-primary" href="https://download.max.ru/" target="_blank" rel="noopener noreferrer">Установить</a>
+    </div>
 
     <!-- VPN Warning Alert Banner -->
     <div id="vpn" class="vpn-banner">
@@ -1750,7 +1812,7 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
       $('nav').style.display = showNav ? 'flex' : 'none';
       $('nav').inert = !showNav;
       $('vpn').inert = !['splash', 'pin'].includes(id) || $('vpn').classList.contains('dismissed');
-      $('phone').classList.toggle('app-unlocked', !['splash', 'pin', 'document'].includes(id));
+      $('phone').classList.toggle('app-unlocked', !['splash', 'pin'].includes(id));
       $('phone').classList.toggle('has-navigation', showNav);
       if (push && previous !== id) history.pushState({ screen: id }, '');
       if (id === 'home' && !history.state?.screen) history.replaceState({ screen: 'home' }, '');
@@ -1926,6 +1988,7 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
     // Dismiss VPN banner
     function dismissWarning() {
       $('vpn').classList.add('dismissed');
+      $('phone').classList.add('warning-dismissed');
       setTimeout(() => {
         $('vpn').style.display = 'none';
       }, 260);
@@ -2155,6 +2218,7 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
     function showProfile() { openScreen('profileScreen'); }
     function openAssistant() { openScreen('assistantScreen'); }
     function openPassportDetails() { openScreen('passportDetails'); }
+    function openMaxInstall() { openScreen('maxInstallScreen'); }
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
@@ -2401,18 +2465,23 @@ body.native-device #phone.keyboard-open .assistant-composer { padding-bottom: 8p
       cancelAnimationFrame(viewportFrame);
       viewportFrame = requestAnimationFrame(() => {
         const viewport = window.visualViewport;
-        if (!nativeDevice || !viewport || Math.abs(viewport.scale - 1) > .01) return;
-        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = viewport.height; viewportWidth = innerWidth; }
-        tallestViewport = Math.max(tallestViewport, viewport.height);
+        if (!nativeDevice || (viewport && Math.abs(viewport.scale - 1) > .01)) return;
+        const height = viewport?.height || innerHeight;
+        if (Math.abs(innerWidth - viewportWidth) > 40) { tallestViewport = height; viewportWidth = innerWidth; }
+        tallestViewport = Math.max(tallestViewport, height);
         const editing = document.activeElement?.matches('input:not([type="file"]), textarea');
-        const keyboard = Boolean(editing && tallestViewport - viewport.height > 100);
+        const keyboard = Boolean(editing && tallestViewport - height > 100);
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
-        $('phone').style.height = Math.round(viewport.height) + 'px';
+        $('phone').style.setProperty('--viewport-height', Math.floor(height) + 'px');
+        $('phone').style.setProperty('--viewport-top', (viewport?.offsetTop || 0) + 'px');
         if (keyboard && changed && currentScreen === 'assistantScreen') $('assistantMessages').scrollTop = $('assistantMessages').scrollHeight;
       });
     }
     window.visualViewport?.addEventListener('resize', resizeForKeyboard);
+    window.visualViewport?.addEventListener('scroll', resizeForKeyboard);
+    window.addEventListener('resize', resizeForKeyboard);
+    window.addEventListener('pageshow', resizeForKeyboard);
     document.addEventListener('focusin', resizeForKeyboard);
     document.addEventListener('focusout', resizeForKeyboard);
     window.addEventListener('orientationchange', () => setTimeout(resizeForKeyboard, 200));

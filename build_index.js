@@ -1271,6 +1271,13 @@ let html = `<!doctype html>
       </section>
     </main>
 
+    <div class="screen-footer document-footer">
+      <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
+    </div>
+    <div class="screen-footer max-footer">
+      <a class="footer-primary" href="https://download.max.ru/" target="_blank" rel="noopener noreferrer">Установить</a>
+    </div>
+
     <!-- VPN Warning Alert Banner -->
     <div id="vpn" class="vpn-banner">
       <span class="vpn-alert-badge">!</span>
@@ -1359,7 +1366,7 @@ let html = `<!doctype html>
       $('nav').style.display = showNav ? 'flex' : 'none';
       $('nav').inert = !showNav;
       $('vpn').inert = !['splash', 'pin'].includes(id) || $('vpn').classList.contains('dismissed');
-      $('phone').classList.toggle('app-unlocked', !['splash', 'pin', 'document'].includes(id));
+      $('phone').classList.toggle('app-unlocked', !['splash', 'pin'].includes(id));
       $('phone').classList.toggle('has-navigation', showNav);
       if (push && previous !== id) history.pushState({ screen: id }, '');
       if (id === 'home' && !history.state?.screen) history.replaceState({ screen: 'home' }, '');
@@ -1535,6 +1542,7 @@ let html = `<!doctype html>
     // Dismiss VPN banner
     function dismissWarning() {
       $('vpn').classList.add('dismissed');
+      $('phone').classList.add('warning-dismissed');
       setTimeout(() => {
         $('vpn').style.display = 'none';
       }, 260);
