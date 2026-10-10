@@ -1,6 +1,6 @@
 {
-  "name": "Госуслуги · Демо",
-  "short_name": "Госуслуги · Демо",
+  "name": "Госуслуги",
+  "short_name": "Госуслуги",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

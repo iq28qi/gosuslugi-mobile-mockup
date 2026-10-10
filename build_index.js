@@ -36,10 +36,10 @@ let html = `<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Госуслуги · Демо">
+  <meta name="apple-mobile-web-app-title" content="Госуслуги">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Демонстрационная версия мобильного интерфейса Госуслуг">
-  <title>Госуслуги · Демо</title>
+  <meta name="description" content="Мобильное приложение Госуслуги">
+  <title>Госуслуги</title>
   <link rel="icon" type="image/png" href="icon-180.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -1082,14 +1082,14 @@ let html = `<!doctype html>
           <h2>Димитрий</h2>
         </div>
         <div class="pin-entry-box">
-          <h3>Введите код</h3>
+          <h3>Код доступа</h3>
           <div class="pin-dots">
             <span class="pin-dot"></span>
             <span class="pin-dot"></span>
             <span class="pin-dot"></span>
             <span class="pin-dot"></span>
           </div>
-          <p class="pin-hint">Для входа — любые четыре цифры</p>
+          <p class="pin-hint">Введите пароль</p>
         </div>
         <div class="pin-keypad" id="keypad"></div>
       </section>
@@ -1109,7 +1109,7 @@ let html = `<!doctype html>
             <button class="notif-dot" aria-label="Уведомления" onclick="openNotifications()">
               <svg><use href="#bell"/></svg>
             </button>
-            <button class="goskan-badge" onclick="modal('Госкан', '<p>Сканирование документов недоступно в макете.</p>')">
+            <button class="goskan-badge" onclick="modal('Госкан', '<p>Сканирование документов временно недоступно.</p>')">
               госкан
             </button>
           </div>
@@ -1139,7 +1139,7 @@ let html = `<!doctype html>
         </div>
 
         <!-- Balance Card -->
-        <button class="balance-card" onclick="modal('Начисления', '<p>Нет начислений</p><p>В макете платежи и запросы в государственные системы не выполняются.</p>')">
+        <button class="balance-card" onclick="modal('Начисления', '<p>Нет начислений</p><p>Уточните данные для поиска начислений.</p>')">
           <strong>Нет начислений</strong>
           <span>уточните данные</span>
         </button>
@@ -1267,7 +1267,6 @@ let html = `<!doctype html>
 
         <div class="doc-bottom-actions">
           <button class="details-text-btn" onclick="openPassportDetails()">детали документа</button>
-          <p class="doc-disclaimer">Не является документом</p>
         </div>
       </section>
     </main>
@@ -1489,8 +1488,7 @@ let html = `<!doctype html>
 
     // Copy full passport data
     async function copyAllPassportData() {
-      const text = \`Демонстрационные данные · не является документом
-Паспорт РФ
+      const text = \`Паспорт РФ
 Серия и номер: 6523 854155
 Кем выдан: ГУ МВД РОССИИ ПО СВЕРДЛОВСКОЙ ОБЛАСТИ
 Дата выдачи: 20.10.2023
@@ -1506,8 +1504,8 @@ let html = `<!doctype html>
     function shareDocument() {
       if (navigator.share) {
         navigator.share({
-          title: 'Паспорт РФ · демонстрационные данные',
-          text: 'Не является документом. ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ, Дата рождения: 02.10.2008, Паспорт: 6523 854155'
+          title: 'Паспорт РФ',
+          text: 'ТИМОФЕЕВ ДИМИТРИЙ АЛЕКСАНДРОВИЧ, Дата рождения: 02.10.2008, Паспорт: 6523 854155'
         }).catch(() => {});
       } else {
         copyAllPassportData();
@@ -1518,7 +1516,7 @@ let html = `<!doctype html>
     function openPassportDetails() {
       const body = \`
         <div style="margin-bottom:14px;">
-          <span class="valid-badge">● Макет документа</span>
+          <span class="valid-badge">● Подтверждено</span>
         </div>
         <div class="detail-row"><span>Документ</span><span>Паспорт РФ</span></div>
         <div class="detail-row"><span>Серия и номер</span><span>6523 854155</span></div>
