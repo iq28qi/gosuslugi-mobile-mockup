@@ -1081,6 +1081,7 @@ let html = `<!doctype html>
           </div>
           <h2>Димитрий</h2>
         </div>
+        <div class="pin-controls">
         <div class="pin-entry-box">
           <h3>Код доступа</h3>
           <div class="pin-dots">
@@ -1092,6 +1093,7 @@ let html = `<!doctype html>
           <p class="pin-hint">Введите пароль</p>
         </div>
         <div class="pin-keypad" id="keypad"></div>
+        </div>
       </section>
 
       <!-- Screen 3: Home Dashboard -->
@@ -1268,6 +1270,11 @@ let html = `<!doctype html>
       </section>
     </main>
 
+    <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Предпросмотр Face ID" aria-modal="true" aria-hidden="true" inert>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg><strong>Face ID</strong><span class="face-id-caption">Предпросмотр</span></div>
+      <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
+    </div>
+
     <div class="screen-footer document-footer">
       <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
     </div>
@@ -1343,6 +1350,7 @@ let html = `<!doctype html>
     function navigate(id, push = false, direction = 'forward') {
       if (!$(id)?.classList.contains('screen')) return;
       const previous = currentScreen;
+      window.closeFaceIdPreview?.();
       closeModal();
       clearTimeout(splashTimer);
       clearTimeout(pinCompleteTimer);
@@ -1403,6 +1411,7 @@ let html = `<!doctype html>
     function skipSplash() {
       if (currentScreen !== 'splash') return;
       navigate('pin');
+      window.previewFaceId?.();
     }
 
     function resetPin() {
@@ -1421,7 +1430,7 @@ let html = `<!doctype html>
 
     // PIN code handling
     function inputKey(key) {
-      if (currentScreen !== 'pin' || pinUnlocking) return;
+      if (currentScreen !== 'pin' || pinUnlocking || $('faceIdOverlay').classList.contains('open')) return;
 
       // Haptic feedback
       if (navigator.vibrate) navigator.vibrate(15);
@@ -1449,7 +1458,7 @@ let html = `<!doctype html>
 
     // Keypad generation
     $('keypad').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'delete'].map(k => {
-      if (k === '') return '<span></span>';
+      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg></button>';
       if (k === 'delete') {
         return \`<button class="del-btn" aria-label="Удалить" onclick="inputKey('delete')"><svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></button>\`;
       }

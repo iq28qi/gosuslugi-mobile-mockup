@@ -98,6 +98,37 @@
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
+    let faceIdTimer = null;
+    window.closeFaceIdPreview = () => {
+      clearTimeout(faceIdTimer);
+      const overlay = $('faceIdOverlay');
+      if (!overlay.classList.contains('open')) return;
+      overlay.classList.remove('open');
+      overlay.inert = true;
+      overlay.setAttribute('aria-hidden', 'true');
+      $('phone').classList.remove('face-preview');
+      document.querySelector('main').inert = false;
+      if (currentScreen === 'pin') $('pin').focus({ preventScroll: true });
+    };
+    window.previewFaceId = () => {
+      if (currentScreen !== 'pin' || pinUnlocking) return;
+      clearTimeout(faceIdTimer);
+      const overlay = $('faceIdOverlay');
+      overlay.inert = false;
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('open');
+      $('phone').classList.add('face-preview');
+      document.querySelector('main').inert = true;
+      overlay.tabIndex = -1;
+      overlay.focus({ preventScroll: true });
+      // This reference animation returns to PIN entry and performs no authentication.
+      faceIdTimer = setTimeout(closeFaceIdPreview, 1100);
+    };
+    $('faceIdOverlay').addEventListener('keydown', event => {
+      if (event.key === 'Escape') { event.preventDefault(); closeFaceIdPreview(); }
+      if (event.key === 'Tab') { event.preventDefault(); $('faceIdOverlay').querySelector('button').focus(); }
+    });
+
     function openCategory(title, context = 'services') {
       $('categoryTitle').textContent = title;
       const items = categoryContent[title] || [title];
@@ -396,7 +427,7 @@
     document.addEventListener('visibilitychange', refreshInstalledApp);
     refreshInstalledApp();
 
-    // Only transform and opacity animate; layout stays stable on mobile GPUs.
+    // Animate the screen layers together; retain their position on quick reversals.
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
     const runningMotion = new Set();
     function stopScreenMotion() {
@@ -409,7 +440,7 @@
       runningMotion.add(record);
       const clean = () => {
         animation.onfinish = animation.oncancel = null;
-        if (className) element.classList.remove(className);
+        if (className) element.classList.remove(className, 'motion-back');
         runningMotion.delete(record);
         animation.cancel();
       };
@@ -417,33 +448,30 @@
       return animation;
     }
     window.animateScreenChange = (previous, next, direction) => {
+      const positions = new Map([...runningMotion].map(({ element }) => {
+        const style = getComputedStyle(element);
+        return [element, { transform: style.transform, opacity: style.opacity }];
+      }));
       stopScreenMotion();
       if (previous === next || motionPreference.matches || !Element.prototype.animate) return;
       const incoming = $(next), outgoing = $(previous);
-      const options = { duration: 390, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+      const options = { duration: 320, easing: 'cubic-bezier(.25, .8, .25, 1)', fill: 'both' };
       let start = { transform: 'translate3d(100%,0,0)', opacity: 1 };
-      let end = { transform: 'translate3d(-18%,0,0)', opacity: .5 };
+      let end = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
       if (direction === 'back') {
-        start = { transform: 'translate3d(-18%,0,0)', opacity: .65 };
+        start = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
         end = { transform: 'translate3d(100%,0,0)', opacity: 1 };
       } else if (direction === 'tab' || ['splash','pin'].includes(previous) || ['splash','pin'].includes(next)) {
-        start = { transform: 'translate3d(0,10px,0)', opacity: 0 };
-        end = { transform: 'translate3d(0,-5px,0)', opacity: 0 };
-        options.duration = 280;
+        start = { transform: 'translate3d(0,0,0)', opacity: 0 };
+        end = { transform: 'translate3d(0,0,0)', opacity: 0 };
+        options.duration = 200;
       }
       if (next === 'catalogScreen') start = { transform: 'translate3d(0,100%,0)', opacity: 1 };
       if (previous === 'catalogScreen') { start = { transform: 'translate3d(0,-8px,0)', opacity: .8 }; end = { transform: 'translate3d(0,100%,0)', opacity: 1 }; }
       const rest = { transform: 'translate3d(0,0,0)', opacity: 1 };
-      if (outgoing) playMotion(outgoing, [rest, end], options, 'motion-out');
-      playMotion(incoming, [start, rest], options, 'motion-in');
+      if (outgoing) playMotion(outgoing, [positions.get(outgoing) || rest, end], options, 'motion-out');
+      playMotion(incoming, [positions.get(incoming) || start, rest], options, 'motion-in');
       incoming.classList.toggle('motion-back', direction === 'back');
-      if (direction !== 'back') {
-        const cards = [...incoming.querySelectorAll('.balance-card, .dashboard-panel, .menu-row, .catalog-card, .profile-summary, .notification-row, .news-banner')];
-        const limit = $('phone').getBoundingClientRect().bottom - (incoming.classList.contains('tab-screen') ? 60 : 0);
-        cards.filter(card => card.getBoundingClientRect().top < limit).slice(0, 7).forEach((card, index) => {
-          playMotion(card, [{ transform: 'translate3d(0,9px,0)', opacity: .3 }, rest], { duration: 240, delay: 35 + index * 25, easing: options.easing, fill: 'backwards' });
-        });
-      }
     };
     motionPreference.addEventListener?.('change', stopScreenMotion);
     document.addEventListener('visibilitychange', () => { if (document.hidden) stopScreenMotion(); });

@@ -987,7 +987,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 .status-battery { width: 26px; height: 14px; position: relative; border-radius: 4px; background: #83848c; color: #000; font-size: 12px; line-height: 14px; font-weight: 700; }
 .status-battery span { display: block; height: 14px; width: 20px; background: white; border-radius: 4px 0 0 4px; padding-left: 3px; }
 .status-battery::after { content: ''; width: 2px; height: 5px; background: #83848c; position: absolute; right: -3px; top: 4px; border-radius: 0 2px 2px 0; }
-.screen { padding-top: 0; background: #000; touch-action: pan-y; transition: none; transform: none; opacity: 0; visibility: hidden; z-index: 0; }
+.screen { padding-top: 0; background: #000; touch-action: auto; transition: none; transform: none; opacity: 0; visibility: hidden; z-index: 0; }
 .screen.active { transition: none; transform: none; opacity: 1; visibility: visible; z-index: 1; }
 .screen.motion-in, .screen.motion-out { visibility: visible; will-change: transform, opacity; }
 .screen.motion-in { z-index: 3; }
@@ -1221,14 +1221,22 @@ body.native-device .footer-primary { min-height: 60px; }
 .max-app-logo { display: block; width: 136px; height: 136px; margin: 0 auto 50px; }
 .max-install-content h1 { font-size: 20px; line-height: 26px; font-weight: 600; margin: 0 0 12px; }
 .max-install-content p { color: #96a3b8; font-size: 14px; line-height: 20px; margin: 0 auto; max-width: 350px; }
-#phone { --pin-footer-height: 108px; }
-#phone.warning-dismissed { --pin-footer-height: 28px; }
-.pin-entry-box { top: 42%; }
+.pin-controls { position: absolute; top: 42%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); left: 5%; right: 5%; display: flex; flex-direction: column; gap: 12px; }
+.pin-controls .pin-entry-box { position: static; inset: auto; margin: 0; flex-shrink: 0; }
 .pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(14.4% - 54px), 90px)); }
 .pin-avatar-circle { width: 32px; height: 32px; }
-.pin-keypad { top: 52.5%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); grid-template-rows: repeat(3, minmax(44px, 8.3cqh)) minmax(44px, 1fr); }
-.pin-keypad button:nth-last-child(-n+2) { align-self: end; height: min(64px, 8.3cqh); }
-#phone[data-screen="pin"] .vpn-banner { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+.pin-controls .pin-keypad { position: static; inset: auto; width: 100%; height: auto; flex: 1; min-height: 0; margin: 0; grid-template-rows: repeat(4, minmax(44px, 1fr)); }
+.pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.5; }
+#phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+.face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0003; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .16s ease, visibility 0s .16s; }
+.face-id-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
+.face-id-card svg { width: 72px; height: 72px; stroke-width: 3.5; }
+.face-id-card strong { font-size: 17px; line-height: 22px; font-weight: 600; }
+.face-id-caption { font-size: 10px; line-height: 12px; color: #87888e; }
+.face-id-code { position: absolute; top: calc(50% + 100px); min-height: 44px; padding: 8px 16px; color: var(--blue); font-size: 14px; }
+#phone.face-preview main { filter: blur(5px); }
+#phone.face-preview .vpn-banner { visibility: hidden; }
 @media (max-width: 374px) {
   .home-header { padding-inline: 12px; }
   .home-header .name-btn { font-size: 16px; gap: 5px; }
@@ -1269,34 +1277,31 @@ body.native-device .footer-primary { min-height: 60px; }
   .payment-empty #paymentEmptyActions { margin-top: 16px; }
   .payments-screen.is-history .payment-empty { padding-top: 26px; }
 }
-@media (max-height: 800px) and (min-height: 561px) {
-  .pin-entry-box { top: 31%; }
+@media (max-height: 700px) and (min-height: 561px) {
+  .pin-controls { top: 31%; gap: 10px; }
   .pin-entry-box h3 { margin-bottom: 12px; }
   .pin-hint { margin-top: 8px; }
-  .pin-keypad { top: 44%; }
-}
-@media (max-height: 800px) {
-  .pin-keypad { bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); grid-template-rows: repeat(4, 1fr); }
-  .pin-keypad button:nth-last-child(-n+2) { height: 100%; align-self: stretch; }
-  #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-height: 560px) {
   .pin-profile { top: max(16px, env(safe-area-inset-top, 0px)); }
-  .pin-keypad { top: 41%; }
-  #phone { --pin-footer-height: 76px; }
+  .pin-controls { top: 23%; gap: 8px; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  .pin-entry-box h3 { margin-bottom: 8px; }
+  .pin-hint { margin-top: 6px; }
   .max-install-content { padding-top: 12px; }
   .max-app-logo { width: 96px; height: 96px; margin-bottom: 24px; }
 }
 @media (max-height: 440px) {
   .pin-profile { top: max(12%, env(safe-area-inset-top, 0px)); }
-  .pin-keypad { top: 8%; bottom: calc(var(--pin-footer-height) + env(safe-area-inset-bottom, 0px)); }
+  .pin-controls { display: contents; }
+  .pin-controls .pin-entry-box { position: absolute; top: 48%; left: 0; right: 58%; }
+  .pin-controls .pin-keypad { position: absolute; top: 8%; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); left: 44%; right: 2%; width: auto; }
 }
 @media (max-height: 440px) { .app-status-bar { height: 28px; padding-top: 3px; } .payment-empty { padding-top: 20px; } .payment-empty > img { width: 160px; height: 145px; } .large-title { margin-top: 16px; } }
 @media (prefers-reduced-motion: reduce) { .switch-control span { transition: none; } }
 @media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }
 
   </style>
-<meta name="app-revision" content="2ba423f4132d">
+<meta name="app-revision" content="2f155df6b9ee">
 </head>
 <body>
   <!-- Global Symbols -->
@@ -1388,6 +1393,7 @@ body.native-device .footer-primary { min-height: 60px; }
           </div>
           <h2>Димитрий</h2>
         </div>
+        <div class="pin-controls">
         <div class="pin-entry-box">
           <h3>Код доступа</h3>
           <div class="pin-dots">
@@ -1399,6 +1405,7 @@ body.native-device .footer-primary { min-height: 60px; }
           <p class="pin-hint">Введите пароль</p>
         </div>
         <div class="pin-keypad" id="keypad"></div>
+        </div>
       </section>
 
       <!-- Screen 3: Home Dashboard -->
@@ -1723,6 +1730,11 @@ body.native-device .footer-primary { min-height: 60px; }
 
     </main>
 
+    <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Предпросмотр Face ID" aria-modal="true" aria-hidden="true" inert>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg><strong>Face ID</strong><span class="face-id-caption">Предпросмотр</span></div>
+      <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
+    </div>
+
     <div class="screen-footer document-footer">
       <button class="footer-primary" onclick="openMaxInstall()"><svg aria-hidden="true"><use href="#icon-face"/></svg>Предъявить в MAX</button>
     </div>
@@ -1798,6 +1810,7 @@ body.native-device .footer-primary { min-height: 60px; }
     function navigate(id, push = false, direction = 'forward') {
       if (!$(id)?.classList.contains('screen')) return;
       const previous = currentScreen;
+      window.closeFaceIdPreview?.();
       closeModal();
       clearTimeout(splashTimer);
       clearTimeout(pinCompleteTimer);
@@ -1858,6 +1871,7 @@ body.native-device .footer-primary { min-height: 60px; }
     function skipSplash() {
       if (currentScreen !== 'splash') return;
       navigate('pin');
+      window.previewFaceId?.();
     }
 
     function resetPin() {
@@ -1876,7 +1890,7 @@ body.native-device .footer-primary { min-height: 60px; }
 
     // PIN code handling
     function inputKey(key) {
-      if (currentScreen !== 'pin' || pinUnlocking) return;
+      if (currentScreen !== 'pin' || pinUnlocking || $('faceIdOverlay').classList.contains('open')) return;
 
       // Haptic feedback
       if (navigator.vibrate) navigator.vibrate(15);
@@ -1904,7 +1918,7 @@ body.native-device .footer-primary { min-height: 60px; }
 
     // Keypad generation
     $('keypad').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'delete'].map(k => {
-      if (k === '') return '<span></span>';
+      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg></button>';
       if (k === 'delete') {
         return `<button class="del-btn" aria-label="Удалить" onclick="inputKey('delete')"><svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></button>`;
       }
@@ -2228,6 +2242,37 @@ body.native-device .footer-primary { min-height: 60px; }
     function openCatalog() { openScreen('catalogScreen'); }
     function openNotifications() { openScreen('notificationsScreen'); }
 
+    let faceIdTimer = null;
+    window.closeFaceIdPreview = () => {
+      clearTimeout(faceIdTimer);
+      const overlay = $('faceIdOverlay');
+      if (!overlay.classList.contains('open')) return;
+      overlay.classList.remove('open');
+      overlay.inert = true;
+      overlay.setAttribute('aria-hidden', 'true');
+      $('phone').classList.remove('face-preview');
+      document.querySelector('main').inert = false;
+      if (currentScreen === 'pin') $('pin').focus({ preventScroll: true });
+    };
+    window.previewFaceId = () => {
+      if (currentScreen !== 'pin' || pinUnlocking) return;
+      clearTimeout(faceIdTimer);
+      const overlay = $('faceIdOverlay');
+      overlay.inert = false;
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('open');
+      $('phone').classList.add('face-preview');
+      document.querySelector('main').inert = true;
+      overlay.tabIndex = -1;
+      overlay.focus({ preventScroll: true });
+      // This reference animation returns to PIN entry and performs no authentication.
+      faceIdTimer = setTimeout(closeFaceIdPreview, 1100);
+    };
+    $('faceIdOverlay').addEventListener('keydown', event => {
+      if (event.key === 'Escape') { event.preventDefault(); closeFaceIdPreview(); }
+      if (event.key === 'Tab') { event.preventDefault(); $('faceIdOverlay').querySelector('button').focus(); }
+    });
+
     function openCategory(title, context = 'services') {
       $('categoryTitle').textContent = title;
       const items = categoryContent[title] || [title];
@@ -2526,7 +2571,7 @@ body.native-device .footer-primary { min-height: 60px; }
     document.addEventListener('visibilitychange', refreshInstalledApp);
     refreshInstalledApp();
 
-    // Only transform and opacity animate; layout stays stable on mobile GPUs.
+    // Animate the screen layers together; retain their position on quick reversals.
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
     const runningMotion = new Set();
     function stopScreenMotion() {
@@ -2539,7 +2584,7 @@ body.native-device .footer-primary { min-height: 60px; }
       runningMotion.add(record);
       const clean = () => {
         animation.onfinish = animation.oncancel = null;
-        if (className) element.classList.remove(className);
+        if (className) element.classList.remove(className, 'motion-back');
         runningMotion.delete(record);
         animation.cancel();
       };
@@ -2547,33 +2592,30 @@ body.native-device .footer-primary { min-height: 60px; }
       return animation;
     }
     window.animateScreenChange = (previous, next, direction) => {
+      const positions = new Map([...runningMotion].map(({ element }) => {
+        const style = getComputedStyle(element);
+        return [element, { transform: style.transform, opacity: style.opacity }];
+      }));
       stopScreenMotion();
       if (previous === next || motionPreference.matches || !Element.prototype.animate) return;
       const incoming = $(next), outgoing = $(previous);
-      const options = { duration: 390, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+      const options = { duration: 320, easing: 'cubic-bezier(.25, .8, .25, 1)', fill: 'both' };
       let start = { transform: 'translate3d(100%,0,0)', opacity: 1 };
-      let end = { transform: 'translate3d(-18%,0,0)', opacity: .5 };
+      let end = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
       if (direction === 'back') {
-        start = { transform: 'translate3d(-18%,0,0)', opacity: .65 };
+        start = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
         end = { transform: 'translate3d(100%,0,0)', opacity: 1 };
       } else if (direction === 'tab' || ['splash','pin'].includes(previous) || ['splash','pin'].includes(next)) {
-        start = { transform: 'translate3d(0,10px,0)', opacity: 0 };
-        end = { transform: 'translate3d(0,-5px,0)', opacity: 0 };
-        options.duration = 280;
+        start = { transform: 'translate3d(0,0,0)', opacity: 0 };
+        end = { transform: 'translate3d(0,0,0)', opacity: 0 };
+        options.duration = 200;
       }
       if (next === 'catalogScreen') start = { transform: 'translate3d(0,100%,0)', opacity: 1 };
       if (previous === 'catalogScreen') { start = { transform: 'translate3d(0,-8px,0)', opacity: .8 }; end = { transform: 'translate3d(0,100%,0)', opacity: 1 }; }
       const rest = { transform: 'translate3d(0,0,0)', opacity: 1 };
-      if (outgoing) playMotion(outgoing, [rest, end], options, 'motion-out');
-      playMotion(incoming, [start, rest], options, 'motion-in');
+      if (outgoing) playMotion(outgoing, [positions.get(outgoing) || rest, end], options, 'motion-out');
+      playMotion(incoming, [positions.get(incoming) || start, rest], options, 'motion-in');
       incoming.classList.toggle('motion-back', direction === 'back');
-      if (direction !== 'back') {
-        const cards = [...incoming.querySelectorAll('.balance-card, .dashboard-panel, .menu-row, .catalog-card, .profile-summary, .notification-row, .news-banner')];
-        const limit = $('phone').getBoundingClientRect().bottom - (incoming.classList.contains('tab-screen') ? 60 : 0);
-        cards.filter(card => card.getBoundingClientRect().top < limit).slice(0, 7).forEach((card, index) => {
-          playMotion(card, [{ transform: 'translate3d(0,9px,0)', opacity: .3 }, rest], { duration: 240, delay: 35 + index * 25, easing: options.easing, fill: 'backwards' });
-        });
-      }
     };
     motionPreference.addEventListener?.('change', stopScreenMotion);
     document.addEventListener('visibilitychange', () => { if (document.hidden) stopScreenMotion(); });
