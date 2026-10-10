@@ -103,7 +103,7 @@
       clearTimeout(faceIdTimer);
       const overlay = $('faceIdOverlay');
       if (!overlay.classList.contains('open')) return;
-      overlay.classList.remove('open');
+      overlay.classList.remove('open', 'success');
       overlay.inert = true;
       overlay.setAttribute('aria-hidden', 'true');
       $('phone').classList.remove('face-preview');
@@ -114,6 +114,10 @@
       if (currentScreen !== 'pin' || pinUnlocking) return;
       clearTimeout(faceIdTimer);
       const overlay = $('faceIdOverlay');
+      // Local demo only: simulate a scan and successful entry without biometric access.
+      dismissWarning();
+      overlay.classList.remove('success');
+      overlay.querySelector('.face-id-caption').textContent = 'Сканирование…';
       overlay.inert = false;
       overlay.setAttribute('aria-hidden', 'false');
       overlay.classList.add('open');
@@ -121,8 +125,13 @@
       document.querySelector('main').inert = true;
       overlay.tabIndex = -1;
       overlay.focus({ preventScroll: true });
-      // This reference animation returns to PIN entry and performs no authentication.
-      faceIdTimer = setTimeout(closeFaceIdPreview, 1100);
+      faceIdTimer = setTimeout(() => {
+        overlay.classList.add('success');
+        overlay.querySelector('.face-id-caption').textContent = 'Готово';
+        faceIdTimer = setTimeout(() => {
+          if (currentScreen === 'pin' && overlay.classList.contains('open')) navigate('home');
+        }, 450);
+      }, 900);
     };
     $('faceIdOverlay').addEventListener('keydown', event => {
       if (event.key === 'Escape') { event.preventDefault(); closeFaceIdPreview(); }

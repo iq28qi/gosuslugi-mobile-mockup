@@ -1270,8 +1270,8 @@ let html = `<!doctype html>
       </section>
     </main>
 
-    <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Предпросмотр Face ID" aria-modal="true" aria-hidden="true" inert>
-      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg><strong>Face ID</strong><span class="face-id-caption">Предпросмотр</span></div>
+    <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Имитация Face ID" aria-modal="true" aria-hidden="true" inert>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path class="face-id-face" d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/><path class="face-id-check" d="m15 33 11 11 23-25"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
       <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
     </div>
 
