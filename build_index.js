@@ -29,7 +29,7 @@ const portraitSilhouetteSvg = `
   <path fill="#fff" stroke="none" d="M0 177 29 167 36 141Q25 125 24 112C13 123 11 84 20 88L17 59Q13 42 31 34C39 10 72 9 91 24Q118 38 114 62L110 87C120 80 116 120 107 115Q104 131 96 140L101 167 132 179V196H0Z"/>
 </svg>`;
 
-const html = `<!doctype html>
+let html = `<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -1106,7 +1106,7 @@ const html = `<!doctype html>
             <button aria-label="Поиск" onclick="searchServices()">
               <svg><use href="#search"/></svg>
             </button>
-            <button class="notif-dot" aria-label="Уведомления" onclick="modal('Уведомления', '<p>Новых уведомлений нет.</p>')">
+            <button class="notif-dot" aria-label="Уведомления" onclick="openNotifications()">
               <svg><use href="#bell"/></svg>
             </button>
             <button class="goskan-badge" onclick="modal('Госкан', '<p>Сканирование документов недоступно в макете.</p>')">
@@ -1190,7 +1190,7 @@ const html = `<!doctype html>
           </div>
         </section>
 
-        <div class="home-extra-note">Уведомления — в колокольчике сверху</div>
+        <div class="home-extra-note">Уведомления и статусы заявлений теперь в колокольчике сверху</div>
       </section>
 
       <!-- Screen 4: Passport Screen -->
@@ -1281,22 +1281,22 @@ const html = `<!doctype html>
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav" id="nav" style="display:none">
-      <button class="selected" id="navHomeBtn" onclick="navigate('home')">
+      <button class="selected" id="navHomeBtn" onclick="openTab('home')">
         <svg><use href="#home-icon"/></svg>
         <span>главная</span>
       </button>
-      <button onclick="services()">
+      <button id="navServicesBtn" onclick="services()">
         <svg><use href="#grid"/></svg>
         <span>услуги</span>
       </button>
       <button class="assistant-tab" aria-label="Помощник" onclick="openAssistant()">
         <img src="${images.assistant}" alt="Помощник">
       </button>
-      <button onclick="modal('Платежи', '<p>Нет начислений</p><p>В макете платежи и запросы в государственные системы не выполняются.</p>')">
+      <button id="navPaymentsBtn" onclick="payments()">
         <svg><use href="#wallet"/></svg>
         <span>платежи</span>
       </button>
-      <button id="navDocBtn" onclick="openPassport()">
+      <button id="navDocBtn" onclick="documents()">
         <svg><use href="#file"/></svg>
         <span>документы</span>
       </button>
@@ -1337,8 +1337,9 @@ const html = `<!doctype html>
     const $ = id => document.getElementById(id);
 
     // Navigation with smooth transitions
-    function navigate(id) {
+    function navigate(id, push = false) {
       if (!$(id)?.classList.contains('screen')) return;
+      const previous = currentScreen;
       closeModal();
       clearTimeout(splashTimer);
       clearTimeout(pinCompleteTimer);
@@ -1352,35 +1353,46 @@ const html = `<!doctype html>
         el.inert = !active;
       });
 
-      const isHome = (id === 'home');
-      const isDoc = (id === 'document');
+      const tabs = { home: 'navHomeBtn', servicesScreen: 'navServicesBtn', paymentsScreen: 'navPaymentsBtn', documentsScreen: 'navDocBtn' };
+      const showNav = id in tabs;
 
       // Update bottom nav
-      $('nav').style.display = isHome ? 'flex' : 'none';
-      $('nav').inert = !isHome;
-      $('vpn').classList.toggle('home-pos', isHome);
+      $('nav').style.display = showNav ? 'flex' : 'none';
+      $('nav').inert = !showNav;
+      $('vpn').inert = !['splash', 'pin'].includes(id) || $('vpn').classList.contains('dismissed');
+      $('phone').classList.toggle('app-unlocked', !['splash', 'pin', 'document'].includes(id));
+      $('phone').classList.toggle('has-navigation', showNav);
+      if (push && previous !== id) history.pushState({ screen: id }, '');
+      if (id === 'home' && !history.state?.screen) history.replaceState({ screen: 'home' }, '');
 
-      if ($('navHomeBtn')) $('navHomeBtn').classList.toggle('selected', isHome);
-      if ($('navDocBtn')) $('navDocBtn').classList.toggle('selected', isDoc);
+      Object.values(tabs).forEach(buttonId => {
+        const selected = tabs[id] === buttonId;
+        $(buttonId).classList.toggle('selected', selected);
+        if (selected) $(buttonId).setAttribute('aria-current', 'page');
+        else $(buttonId).removeAttribute('aria-current');
+      });
 
       $(id).setAttribute('tabindex', '-1');
       $(id).focus({ preventScroll: true });
+      window.updateScreenChrome?.(id);
     }
 
     function openPassport() {
       if (currentScreen === 'document') return;
+      window.passportReturnScreen = currentScreen;
       $('document').scrollTop = 0;
-      navigate('document');
-      history.pushState({ screen: 'document' }, '');
+      navigate('document', true);
     }
 
     function closePassport() {
       if (history.state?.screen === 'document') history.back();
-      else navigate('home');
+      else navigate(window.passportReturnScreen || 'home');
     }
 
-    window.addEventListener('popstate', () => {
-      if (currentScreen === 'document' || currentScreen === 'home') navigate('home');
+    window.addEventListener('popstate', event => {
+      const target = event.state?.screen;
+      if (target && $(target)?.classList.contains('screen')) navigate(target);
+      else if (!['splash', 'pin'].includes(currentScreen)) navigate('home');
     });
 
     // Skip Splash screen
@@ -1551,8 +1563,8 @@ const html = `<!doctype html>
       $('sheet').setAttribute('aria-hidden', 'true');
       $('phone').classList.remove('modal-open');
       document.querySelector('main').inert = false;
-      $('nav').inert = currentScreen !== 'home';
-      $('vpn').inert = $('vpn').classList.contains('dismissed');
+      $('nav').inert = !['home', 'servicesScreen', 'paymentsScreen', 'documentsScreen'].includes(currentScreen);
+      $('vpn').inert = !['pin', 'splash'].includes(currentScreen) || $('vpn').classList.contains('dismissed');
       if (lastFocusElement) {
         lastFocusElement.focus();
         lastFocusElement = null;
@@ -1662,5 +1674,16 @@ const html = `<!doctype html>
 </html>
 `;
 
+const referenceAssets = JSON.parse(fs.readFileSync('reference-assets.json', 'utf8'));
+const assets = { ...images, ...referenceAssets };
+const additionalScreens = fs.readFileSync('screens.html', 'utf8').replace(/\{\{asset\.([a-zA-Z0-9]+)\}\}/g, (_, key) => {
+  if (!assets[key]) throw new Error('Missing asset: ' + key);
+  return assets[key];
+});
+html = html.replace('</style>', fs.readFileSync('mobile-ui.css', 'utf8') + '\n  </style>');
+html = html.replace('    <!-- Main Screens View -->', fs.readFileSync('status-bar.html', 'utf8') + '\n    <!-- Main Screens View -->');
+html = html.replace('    </main>', additionalScreens + '\n    </main>');
+const storyAssets = Object.fromEntries(Object.entries(referenceAssets).filter(([key]) => key.startsWith('story')));
+html = html.replace('  </script>', fs.readFileSync('mobile-app.js', 'utf8').replace('REFERENCE_STORY_ASSETS', JSON.stringify(storyAssets)) + '\n  </script>');
 fs.writeFileSync('index.html', html, 'utf8');
 console.log('Successfully generated updated index.html! File size:', html.length);
