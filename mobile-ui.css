@@ -219,8 +219,8 @@ body.native-device #phone.app-unlocked .app-status-bar { height: calc(10px + env
 body.native-device .app-status-bar > * { display: none; }
 body.native-device .bottom-nav { padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
 /* Home-screen installation: keep the menu compact instead of reserving a 34px blank strip. */
-body.native-device.standalone-app { --nav-height: 60px; }
-body.native-device.standalone-app .bottom-nav { padding-bottom: 10px; }
+body.native-device.standalone-app { --nav-height: 62px; }
+body.native-device.standalone-app .bottom-nav { padding-bottom: 12px; }
 body.native-device.standalone-app .bottom-nav button { line-height: 12px; gap: 4px; }
 body.native-device .assistant-composer { padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 body.native-device .home-bar { display: none !important; }
@@ -265,8 +265,8 @@ body.native-device .footer-primary { min-height: 60px; }
 .pin-controls .pin-keypad { position: static; inset: auto; width: 100%; height: auto; flex: 1; min-height: 0; margin: 0; grid-template-rows: repeat(4, minmax(44px, 1fr)); }
 .pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
-body.native-device.standalone-app #phone[data-screen="pin"] .vpn-banner { bottom: max(0px, calc(max(12px, env(safe-area-inset-bottom, 0px)) - 20px)); }
-body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bottom: calc(50px + env(safe-area-inset-bottom, 0px)); }
+body.native-device.standalone-app #phone[data-screen="pin"] .vpn-banner { bottom: max(0px, calc(max(12px, env(safe-area-inset-bottom, 0px)) - 35px)); }
+body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
 .face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0003; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .16s ease, visibility 0s .16s; }
 .face-id-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
