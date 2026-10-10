@@ -1,6 +1,6 @@
 /* App screens at the reference's logical resolution: 414 × 896.
    On real phones the operating system supplies the status and gesture bars. */
-:root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; }
+:root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; --device-safe-top: env(safe-area-inset-top, 0px); --device-safe-bottom: env(safe-area-inset-bottom, 0px); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 #phone { max-width: 520px; container-type: size; }
@@ -228,8 +228,9 @@ body.native-device .home-bar { display: none !important; }
 @media (min-width: 500px) and (max-width: 599px) { body { display: block; padding: 0; background: #000; } #phone { width: 100%; max-width: none; border-radius: 0; box-shadow: none; } }
 body.native-device { display: block; padding: 0; background: #000; }
 body.native-device #phone { position: fixed; top: var(--viewport-top, 0px); left: 0; margin: 0; width: 100%; max-width: none; height: 100vh; height: var(--viewport-height, 100dvh); border-radius: 0; box-shadow: none; }
-body.native-device.standalone-app #phone { top: 0; bottom: 0; height: auto; min-height: 0; }
-body.native-device.standalone-app #phone.keyboard-open { top: var(--viewport-top, 0px); bottom: auto; height: var(--viewport-height, 100vh); }
+html.standalone-app, body.native-device.standalone-app { height: var(--standalone-height, 100vh); }
+body.native-device.standalone-app #phone { position: absolute; top: 0; bottom: auto; height: var(--standalone-height, 100vh); min-height: 0; }
+body.native-device.standalone-app #phone.keyboard-open { position: fixed; top: var(--viewport-top, 0px); bottom: auto; height: var(--viewport-height, 100vh); }
 body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 5px; }
 body.native-device #document { padding-top: 0; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
@@ -262,12 +263,12 @@ body.native-device .footer-primary { min-height: 60px; }
 .pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(14.4% - 54px), 90px)); }
 .pin-avatar-circle { width: 32px; height: 32px; }
 .pin-controls .pin-keypad { position: static; inset: auto; width: 100%; height: auto; flex: 1; min-height: 0; margin: 0; grid-template-rows: repeat(4, minmax(44px, 1fr)); }
-.pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.5; }
+.pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 .face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0003; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .16s ease, visibility 0s .16s; }
 .face-id-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
-.face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
-.face-id-card svg { width: 72px; height: 72px; stroke-width: 3.5; }
+.face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
+.face-id-card svg { width: 64px; height: 64px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; color: #c5c8cf; }
 .face-id-face { animation: face-id-scan .65s ease-in-out infinite alternate; }
 .face-id-check { opacity: 0; stroke: #57d488; stroke-dasharray: 50; stroke-dashoffset: 50; }
 .face-id-overlay.success .face-id-face { animation: none; opacity: 0; }

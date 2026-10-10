@@ -373,6 +373,24 @@
     const nativeDevice = navigator.standalone === true || /Android|iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || (navigator.maxTouchPoints > 0 && matchMedia('(any-pointer: coarse)').matches);
     document.body.classList.toggle('native-device', nativeDevice);
     document.body.classList.toggle('standalone-app', standaloneApp);
+    document.documentElement.classList.toggle('standalone-app', standaloneApp);
+    const iosHomeApp = standaloneApp && (navigator.standalone === true || /iPhone|iPad|iPod/.test(navigator.userAgent));
+    function updateStandaloneHeight() {
+      if (!iosHomeApp) return;
+      const root = document.documentElement;
+      const style = getComputedStyle(root);
+      const safeTop = parseFloat(style.getPropertyValue('--device-safe-top')) || 0;
+      const safeBottom = parseFloat(style.getPropertyValue('--device-safe-bottom')) || 0;
+      const fullHeight = Math.abs(innerWidth - screen.width) <= 2 ? screen.height
+        : Math.abs(innerWidth - screen.height) <= 2 ? screen.width : 0;
+      const availableHeight = innerHeight;
+      // WebKit can exclude the status bar from both CSS viewport height and inset:0.
+      // Use the screen size only for a full-width home-screen window drawing under that bar.
+      if (safeTop > 0 && fullHeight >= availableHeight && fullHeight - availableHeight <= safeTop + safeBottom + 8) {
+        root.style.setProperty('--standalone-height', fullHeight + 'px');
+      } else root.style.removeProperty('--standalone-height');
+    }
+    updateStandaloneHeight();
     function updateDeviceTime() { const date = new Date(); $('deviceTime').textContent = date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); }
     updateDeviceTime();
     setInterval(updateDeviceTime, 30000);
@@ -391,6 +409,7 @@
         const keyboard = Boolean(editing && tallestViewport - height > 100);
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
+        if (standaloneApp && !keyboard) updateStandaloneHeight();
         // iOS can retain a shorter visual viewport after the keyboard or app switch.
         // Outside keyboard input, a home-screen app fills its CSS viewport instead.
         if (standaloneApp && !keyboard) $('phone').style.removeProperty('--viewport-height');

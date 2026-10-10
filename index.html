@@ -970,7 +970,7 @@
     }
   /* App screens at the reference's logical resolution: 414 × 896.
    On real phones the operating system supplies the status and gesture bars. */
-:root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; }
+:root { --panel: #27272f; --blue: #008dff; --nav-height: 84px; --screen-pad: 8px; --device-safe-top: env(safe-area-inset-top, 0px); --device-safe-bottom: env(safe-area-inset-bottom, 0px); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 #phone { max-width: 520px; container-type: size; }
@@ -1198,8 +1198,9 @@ body.native-device .home-bar { display: none !important; }
 @media (min-width: 500px) and (max-width: 599px) { body { display: block; padding: 0; background: #000; } #phone { width: 100%; max-width: none; border-radius: 0; box-shadow: none; } }
 body.native-device { display: block; padding: 0; background: #000; }
 body.native-device #phone { position: fixed; top: var(--viewport-top, 0px); left: 0; margin: 0; width: 100%; max-width: none; height: 100vh; height: var(--viewport-height, 100dvh); border-radius: 0; box-shadow: none; }
-body.native-device.standalone-app #phone { top: 0; bottom: 0; height: auto; min-height: 0; }
-body.native-device.standalone-app #phone.keyboard-open { top: var(--viewport-top, 0px); bottom: auto; height: var(--viewport-height, 100vh); }
+html.standalone-app, body.native-device.standalone-app { height: var(--standalone-height, 100vh); }
+body.native-device.standalone-app #phone { position: absolute; top: 0; bottom: auto; height: var(--standalone-height, 100vh); min-height: 0; }
+body.native-device.standalone-app #phone.keyboard-open { position: fixed; top: var(--viewport-top, 0px); bottom: auto; height: var(--viewport-height, 100vh); }
 body.native-device #phone { padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 body.native-device .bottom-nav { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; transform: none; padding-top: 5px; }
 body.native-device #document { padding-top: 0; padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
@@ -1232,12 +1233,12 @@ body.native-device .footer-primary { min-height: 60px; }
 .pin-profile { top: max(env(safe-area-inset-top, 0px), clamp(40px, calc(14.4% - 54px), 90px)); }
 .pin-avatar-circle { width: 32px; height: 32px; }
 .pin-controls .pin-keypad { position: static; inset: auto; width: 100%; height: auto; flex: 1; min-height: 0; margin: 0; grid-template-rows: repeat(4, minmax(44px, 1fr)); }
-.pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.5; }
+.pin-keypad .face-id-key svg { width: 32px; height: 32px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
 #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 .face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0003; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .16s ease, visibility 0s .16s; }
 .face-id-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
-.face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
-.face-id-card svg { width: 72px; height: 72px; stroke-width: 3.5; }
+.face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
+.face-id-card svg { width: 64px; height: 64px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; color: #c5c8cf; }
 .face-id-face { animation: face-id-scan .65s ease-in-out infinite alternate; }
 .face-id-check { opacity: 0; stroke: #57d488; stroke-dasharray: 50; stroke-dashoffset: 50; }
 .face-id-overlay.success .face-id-face { animation: none; opacity: 0; }
@@ -1315,7 +1316,7 @@ body.native-device .footer-primary { min-height: 60px; }
 @media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }
 
   </style>
-<meta name="app-revision" content="09cb5c181864">
+<meta name="app-revision" content="ddeadddb4265">
 </head>
 <body>
   <!-- Global Symbols -->
@@ -1745,7 +1746,7 @@ body.native-device .footer-primary { min-height: 60px; }
     </main>
 
     <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Имитация Face ID" aria-modal="true" aria-hidden="true" inert>
-      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path class="face-id-face" d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/><path class="face-id-check" d="m15 33 11 11 23-25"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="face-id-face"><path d="M21 7h-6a8 8 0 0 0-8 8v6m36-14h6a8 8 0 0 1 8 8v6M7 43v6a8 8 0 0 0 8 8h6m22 0h6a8 8 0 0 0 8-8v-6"/><path d="M22 25v6m20-6v6m-9-7v12a3 3 0 0 1-3 3h-2M22 45c5 6 15 6 20 0"/></g><path class="face-id-check" d="m16 33 10 10 22-24"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
       <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
     </div>
 
@@ -1932,7 +1933,7 @@ body.native-device .footer-primary { min-height: 60px; }
 
     // Keypad generation
     $('keypad').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'delete'].map(k => {
-      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg></button>';
+      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M21 7h-6a8 8 0 0 0-8 8v6m36-14h6a8 8 0 0 1 8 8v6M7 43v6a8 8 0 0 0 8 8h6m22 0h6a8 8 0 0 0 8-8v-6"/><path d="M22 25v6m20-6v6m-9-7v12a3 3 0 0 1-3 3h-2M22 45c5 6 15 6 20 0"/></svg></button>';
       if (k === 'delete') {
         return `<button class="del-btn" aria-label="Удалить" onclick="inputKey('delete')"><svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></button>`;
       }
@@ -2531,6 +2532,24 @@ body.native-device .footer-primary { min-height: 60px; }
     const nativeDevice = navigator.standalone === true || /Android|iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || (navigator.maxTouchPoints > 0 && matchMedia('(any-pointer: coarse)').matches);
     document.body.classList.toggle('native-device', nativeDevice);
     document.body.classList.toggle('standalone-app', standaloneApp);
+    document.documentElement.classList.toggle('standalone-app', standaloneApp);
+    const iosHomeApp = standaloneApp && (navigator.standalone === true || /iPhone|iPad|iPod/.test(navigator.userAgent));
+    function updateStandaloneHeight() {
+      if (!iosHomeApp) return;
+      const root = document.documentElement;
+      const style = getComputedStyle(root);
+      const safeTop = parseFloat(style.getPropertyValue('--device-safe-top')) || 0;
+      const safeBottom = parseFloat(style.getPropertyValue('--device-safe-bottom')) || 0;
+      const fullHeight = Math.abs(innerWidth - screen.width) <= 2 ? screen.height
+        : Math.abs(innerWidth - screen.height) <= 2 ? screen.width : 0;
+      const availableHeight = innerHeight;
+      // WebKit can exclude the status bar from both CSS viewport height and inset:0.
+      // Use the screen size only for a full-width home-screen window drawing under that bar.
+      if (safeTop > 0 && fullHeight >= availableHeight && fullHeight - availableHeight <= safeTop + safeBottom + 8) {
+        root.style.setProperty('--standalone-height', fullHeight + 'px');
+      } else root.style.removeProperty('--standalone-height');
+    }
+    updateStandaloneHeight();
     function updateDeviceTime() { const date = new Date(); $('deviceTime').textContent = date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0'); }
     updateDeviceTime();
     setInterval(updateDeviceTime, 30000);
@@ -2549,6 +2568,7 @@ body.native-device .footer-primary { min-height: 60px; }
         const keyboard = Boolean(editing && tallestViewport - height > 100);
         const changed = $('phone').classList.contains('keyboard-open') !== keyboard;
         $('phone').classList.toggle('keyboard-open', keyboard);
+        if (standaloneApp && !keyboard) updateStandaloneHeight();
         // iOS can retain a shorter visual viewport after the keyboard or app switch.
         // Outside keyboard input, a home-screen app fills its CSS viewport instead.
         if (standaloneApp && !keyboard) $('phone').style.removeProperty('--viewport-height');

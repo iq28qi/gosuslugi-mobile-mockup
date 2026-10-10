@@ -1,5 +1,7 @@
 const fs = require('fs');
 const images = JSON.parse(fs.readFileSync('extracted_images.json', 'utf8'));
+// Shared vector keeps the scan dialog and keypad icon optically consistent.
+const faceIdGlyph = '<path d="M21 7h-6a8 8 0 0 0-8 8v6m36-14h6a8 8 0 0 1 8 8v6M7 43v6a8 8 0 0 0 8 8h6m22 0h6a8 8 0 0 0 8-8v-6"/><path d="M22 25v6m20-6v6m-9-7v12a3 3 0 0 1-3 3h-2M22 45c5 6 15 6 20 0"/>';
 
 // Double-headed eagle SVG path for watermark
 const eagleWatermarkSvg = `
@@ -1271,7 +1273,7 @@ let html = `<!doctype html>
     </main>
 
     <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Имитация Face ID" aria-modal="true" aria-hidden="true" inert>
-      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><path class="face-id-face" d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/><path class="face-id-check" d="m15 33 11 11 23-25"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="face-id-face">${faceIdGlyph}</g><path class="face-id-check" d="m16 33 10 10 22-24"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
       <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
     </div>
 
@@ -1458,7 +1460,7 @@ let html = `<!doctype html>
 
     // Keypad generation
     $('keypad').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'delete'].map(k => {
-      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64"><path d="M8 22V13q0-5 5-5h9m20 0h9q5 0 5 5v9M8 42v9q0 5 5 5h9m20 0h9q5 0 5-5v-9M22 27v5m20-5v5M33 27v11q0 3-4 3m-5 6q8 6 16 0"/></svg></button>';
+      if (k === '') return '<button class="face-id-key" aria-label="Face ID" onclick="previewFaceId()"><svg viewBox="0 0 64 64" aria-hidden="true">${faceIdGlyph}</svg></button>';
       if (k === 'delete') {
         return \`<button class="del-btn" aria-label="Удалить" onclick="inputKey('delete')"><svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg></button>\`;
       }
