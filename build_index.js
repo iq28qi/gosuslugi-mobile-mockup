@@ -1352,6 +1352,7 @@ let html = `<!doctype html>
     function navigate(id, push = false, direction = 'forward') {
       if (!$(id)?.classList.contains('screen')) return;
       const previous = currentScreen;
+      const motionState = window.captureScreenMotion?.();
       window.closeFaceIdPreview?.();
       closeModal();
       clearTimeout(splashTimer);
@@ -1370,7 +1371,7 @@ let html = `<!doctype html>
       const showNav = id in tabs;
 
       // Update bottom nav
-      $('nav').style.display = showNav ? 'flex' : 'none';
+      $('nav').style.display = 'flex';
       $('nav').inert = !showNav;
       $('vpn').inert = !['splash', 'pin'].includes(id) || $('vpn').classList.contains('dismissed');
       $('phone').classList.toggle('app-unlocked', !['splash', 'pin'].includes(id));
@@ -1388,7 +1389,7 @@ let html = `<!doctype html>
       $(id).setAttribute('tabindex', '-1');
       $(id).focus({ preventScroll: true });
       window.updateScreenChrome?.(id);
-      window.animateScreenChange?.(previous, id, direction);
+      window.animateScreenChange?.(previous, id, direction, motionState);
     }
 
     function openPassport() {

@@ -457,11 +457,20 @@
 
     // Animate the screen layers together; retain their position on quick reversals.
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+    const motionEasing = getComputedStyle(document.documentElement).getPropertyValue('--motion-ease').trim();
     const runningMotion = new Set();
+    window.captureScreenMotion = () => ({
+      positions: new Map([...runningMotion].map(({ element }) => {
+        const style = getComputedStyle(element);
+        return [element, { transform: style.transform, opacity: style.opacity }];
+      })),
+      mainTop: document.querySelector('main').getBoundingClientRect().top,
+      height: $(currentScreen)?.offsetHeight
+    });
     function stopScreenMotion() {
-      for (const record of [...runningMotion]) record.animation.cancel();
+      for (const record of [...runningMotion]) record.stop();
     }
-    function playMotion(element, frames, options, className) {
+    function playMotion(element, frames, options, className, restoreLayout = () => {}) {
       if (className) element.classList.add(className);
       const animation = element.animate(frames, options);
       const record = { animation, element };
@@ -469,35 +478,45 @@
       const clean = () => {
         animation.onfinish = animation.oncancel = null;
         if (className) element.classList.remove(className, 'motion-back');
+        restoreLayout();
         runningMotion.delete(record);
         animation.cancel();
       };
       animation.onfinish = animation.oncancel = clean;
+      record.stop = clean;
       return animation;
     }
-    window.animateScreenChange = (previous, next, direction) => {
-      const positions = new Map([...runningMotion].map(({ element }) => {
-        const style = getComputedStyle(element);
-        return [element, { transform: style.transform, opacity: style.opacity }];
-      }));
+    window.animateScreenChange = (previous, next, direction, motionState) => {
+      if (previous === next) return;
+      const positions = (motionState || captureScreenMotion()).positions;
       stopScreenMotion();
-      if (previous === next || motionPreference.matches || !Element.prototype.animate) return;
+      if (motionPreference.matches || !Element.prototype.animate) return;
       const incoming = $(next), outgoing = $(previous);
-      const options = { duration: 320, easing: 'cubic-bezier(.25, .8, .25, 1)', fill: 'both' };
+      const options = { duration: 300, easing: motionEasing, fill: 'both' };
       let start = { transform: 'translate3d(100%,0,0)', opacity: 1 };
-      let end = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
+      let end = { transform: 'translate3d(-18%,0,0)', opacity: 1 };
       if (direction === 'back') {
-        start = { transform: 'translate3d(-25%,0,0)', opacity: 1 };
+        start = { transform: 'translate3d(-18%,0,0)', opacity: 1 };
         end = { transform: 'translate3d(100%,0,0)', opacity: 1 };
       } else if (direction === 'tab' || ['splash','pin'].includes(previous) || ['splash','pin'].includes(next)) {
         start = { transform: 'translate3d(0,0,0)', opacity: 0 };
         end = { transform: 'translate3d(0,0,0)', opacity: 0 };
-        options.duration = 200;
+        options.duration = 180;
       }
-      if (next === 'catalogScreen') start = { transform: 'translate3d(0,100%,0)', opacity: 1 };
-      if (previous === 'catalogScreen') { start = { transform: 'translate3d(0,-8px,0)', opacity: .8 }; end = { transform: 'translate3d(0,100%,0)', opacity: 1 }; }
       const rest = { transform: 'translate3d(0,0,0)', opacity: 1 };
-      if (outgoing) playMotion(outgoing, [positions.get(outgoing) || rest, end], options, 'motion-out');
+      if (next === 'catalogScreen') { start = { transform: 'translate3d(0,100%,0)', opacity: 1 }; end = rest; }
+      if (previous === 'catalogScreen' && direction === 'back') { start = rest; end = { transform: 'translate3d(0,100%,0)', opacity: 1 }; }
+      if (outgoing) {
+        let restoreLayout = () => {};
+        if (motionState && motionState.height !== outgoing.offsetHeight) {
+          const saved = { height: outgoing.style.height, top: outgoing.style.top, bottom: outgoing.style.bottom };
+          outgoing.style.height = motionState.height + 'px';
+          outgoing.style.top = (motionState.mainTop - document.querySelector('main').getBoundingClientRect().top) + 'px';
+          outgoing.style.bottom = 'auto';
+          restoreLayout = () => Object.assign(outgoing.style, saved);
+        }
+        playMotion(outgoing, [positions.get(outgoing) || rest, end], options, 'motion-out', restoreLayout);
+      }
       playMotion(incoming, [positions.get(incoming) || start, rest], options, 'motion-in');
       incoming.classList.toggle('motion-back', direction === 'back');
     };
