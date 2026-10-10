@@ -10,6 +10,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial
 #phone.app-unlocked .app-status-bar { display: flex; }
 #phone[data-screen="home"] .app-status-bar { background: #030811; }
 #phone[data-screen="servicesScreen"] .app-status-bar { background: #151515; }
+#phone[data-screen="servicesScreen"], .screen.services-screen { background: #151515; }
 .device-time { font-size: 16px; line-height: 20px; font-weight: 600; }
 .status-person { width: 11px; height: 15px; margin-top: 3px; fill: #fff; stroke: none; }
 .status-indicators { margin-left: auto; display: flex; gap: 5px; align-items: center; height: 19px; }
@@ -96,7 +97,7 @@ button:active, .pin-keypad button:active, .copy-icon-btn:active, .grid-item:acti
 .dashboard-panel + .dashboard-panel { padding-top: 22px; }
 .home-extra-note { border: 1px solid #33383e; border-radius: 12px; margin: 24px 8px 0; padding: 17px 20px; font-size: 14px; line-height: 20px; }
 .mockup-note { margin: 18px 20px; font-size: 12px; line-height: 17px; text-align: center; color: #8c97aa; }
-.region-toolbar.page-toolbar { grid-template-columns: 1fr 1.1fr; height: 38px; margin-bottom: 0; padding: 0 34px 0 106px; background: #151515; border-bottom: 1px solid #363638; }
+.region-toolbar.page-toolbar { grid-template-columns: 1fr 1.1fr; height: 38px; margin-bottom: 0; padding: 0 34px 0 106px; background: #151515; }
 .region-toolbar button { font-size: 14px; color: var(--blue); white-space: nowrap; justify-content: flex-end; gap: 7px; }
 .region-toolbar svg { flex-shrink: 0; width: 23px; height: 23px; }
 .region-card { margin: 10px 8px 36px; width: calc(100% - 16px); display: flex; gap: 16px; text-align: left; align-items: center; border-radius: 14px; border: 1px solid #91a4ba; background: #d7d7d7; padding: 22px 21px; color: #151515; }
@@ -271,19 +272,25 @@ body.native-device .footer-primary { min-height: 60px; }
 #phone[data-screen="pin"] .vpn-banner { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 body.native-device.standalone-app #phone[data-screen="pin"] .vpn-banner { bottom: max(0px, calc(max(12px, env(safe-area-inset-bottom, 0px)) - 35px)); }
 body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
-.face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0003; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .18s var(--motion-fade), visibility 0s .18s; }
+.face-id-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .32s var(--motion-fade), visibility 0s .32s; }
+.face-id-overlay::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #0003; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
 .face-id-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .face-id-card { width: 146px; min-height: 150px; border-radius: 10px; background: #161719eF; padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: #a5a5a8; }
 .face-id-card svg { width: 64px; height: 64px; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; color: #c5c8cf; }
-.face-id-face { animation: face-id-scan 1.1s ease-in-out infinite alternate; transition: opacity .16s linear; }
-.face-id-check { opacity: 0; stroke: #57d488; stroke-dasharray: 50; stroke-dashoffset: 50; transition: opacity .16s linear, stroke-dashoffset .22s var(--motion-ease); }
-.face-id-overlay.success .face-id-face { animation: none; opacity: 0; }
+.face-id-face { opacity: 1; transition: opacity .36s var(--motion-fade); }
+.face-id-pulse { animation: face-id-scan 1.2s ease-in-out infinite alternate paused; }
+.face-id-overlay.open .face-id-pulse { animation-play-state: running; }
+.face-id-check { opacity: 0; stroke: currentColor; stroke-dasharray: 1; stroke-dashoffset: 1; transition: opacity .3s var(--motion-fade), stroke-dashoffset .46s var(--motion-ease); }
+.face-id-overlay.success .face-id-face { opacity: 0; }
 .face-id-overlay.success .face-id-check { opacity: 1; stroke-dashoffset: 0; }
-@keyframes face-id-scan { from { opacity: .7; } to { opacity: 1; } }
+@keyframes face-id-scan { from { opacity: .8; } to { opacity: 1; } }
 .face-id-card strong { font-size: 17px; line-height: 22px; font-weight: 600; }
-.face-id-caption { font-size: 10px; line-height: 12px; color: #87888e; }
+.face-id-caption { display: grid; font-size: 10px; line-height: 12px; color: #87888e; }
+.face-id-caption > span { grid-area: 1 / 1; text-align: center; transition: opacity .3s var(--motion-fade); }
+.face-id-caption .face-id-ready { opacity: 0; }
+.face-id-overlay.success .face-id-scanning { opacity: 0; }
+.face-id-overlay.success .face-id-ready { opacity: 1; }
 .face-id-code { position: absolute; top: calc(50% + 100px); min-height: 44px; padding: 8px 16px; color: var(--blue); font-size: 14px; }
-#phone.face-preview main { filter: blur(5px); }
 #phone.face-preview .vpn-banner { visibility: hidden; }
 @media (max-width: 374px) {
   .home-header { padding-inline: 12px; }
@@ -348,5 +355,5 @@ body.native-device.standalone-app #phone[data-screen="splash"] .vpn-banner { bot
 @media (prefers-reduced-motion: reduce) { .switch-control span { transition: none; } }
 #phone.warning-dismissed .pin-controls { bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
 @media (max-height: 440px) { #phone.warning-dismissed .pin-controls .pin-keypad { bottom: max(12px, env(safe-area-inset-bottom, 0px)); } }
-@media (prefers-reduced-motion: reduce) { .face-id-face { animation: none; } .face-id-check { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .face-id-pulse { animation: none; } .face-id-overlay, .face-id-face, .face-id-check, .face-id-caption > span { transition: none !important; } }
 @media (hover: hover) and (pointer: fine) { .menu-row:hover, .catalog-card-title button:hover, .grid-item:hover { filter: brightness(1.1); } }

@@ -1273,7 +1273,7 @@ let html = `<!doctype html>
     </main>
 
     <div id="faceIdOverlay" class="face-id-overlay" role="dialog" aria-label="Имитация Face ID" aria-modal="true" aria-hidden="true" inert>
-      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="face-id-face">${faceIdGlyph}</g><path class="face-id-check" d="m16 33 10 10 22-24"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status">Сканирование…</span></div>
+      <div class="face-id-card"><svg viewBox="0 0 64 64" aria-hidden="true"><g class="face-id-face"><g class="face-id-pulse">${faceIdGlyph}</g></g><path class="face-id-check" pathLength="1" d="m16 33 10 10 22-24"/></svg><strong>Face ID</strong><span class="face-id-caption" role="status"><span class="face-id-scanning">Сканирование…</span><span class="face-id-ready" aria-hidden="true">Готово</span></span></div>
       <button class="face-id-code" onclick="closeFaceIdPreview()">Ввести код</button>
     </div>
 

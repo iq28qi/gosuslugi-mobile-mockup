@@ -103,7 +103,8 @@
       clearTimeout(faceIdTimer);
       const overlay = $('faceIdOverlay');
       if (!overlay.classList.contains('open')) return;
-      overlay.classList.remove('open', 'success');
+      // Preserve the current glyph throughout the closing fade.
+      overlay.classList.remove('open');
       overlay.inert = true;
       overlay.setAttribute('aria-hidden', 'true');
       $('phone').classList.remove('face-preview');
@@ -111,13 +112,14 @@
       if (currentScreen === 'pin') $('pin').focus({ preventScroll: true });
     };
     window.previewFaceId = () => {
-      if (currentScreen !== 'pin' || pinUnlocking) return;
+      if (currentScreen !== 'pin' || pinUnlocking || $('faceIdOverlay').classList.contains('open')) return;
       clearTimeout(faceIdTimer);
       const overlay = $('faceIdOverlay');
       // Local demo only: simulate a scan and successful entry without biometric access.
       dismissWarning();
       overlay.classList.remove('success');
-      overlay.querySelector('.face-id-caption').textContent = 'Сканирование…';
+      overlay.querySelector('.face-id-scanning').removeAttribute('aria-hidden');
+      overlay.querySelector('.face-id-ready').setAttribute('aria-hidden', 'true');
       overlay.inert = false;
       overlay.setAttribute('aria-hidden', 'false');
       overlay.classList.add('open');
@@ -127,11 +129,12 @@
       overlay.focus({ preventScroll: true });
       faceIdTimer = setTimeout(() => {
         overlay.classList.add('success');
-        overlay.querySelector('.face-id-caption').textContent = 'Готово';
+        overlay.querySelector('.face-id-scanning').setAttribute('aria-hidden', 'true');
+        overlay.querySelector('.face-id-ready').removeAttribute('aria-hidden');
         faceIdTimer = setTimeout(() => {
           if (currentScreen === 'pin' && overlay.classList.contains('open')) navigate('home');
-        }, 450);
-      }, 900);
+        }, 740);
+      }, 1100);
     };
     $('faceIdOverlay').addEventListener('keydown', event => {
       if (event.key === 'Escape') { event.preventDefault(); closeFaceIdPreview(); }
