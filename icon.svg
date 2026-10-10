@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="40" fill="#fff"/>
+  <defs>
+    <linearGradient id="logo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0066ad"/>
+      <stop offset=".44" stop-color="#0078b8"/>
+      <stop offset=".7" stop-color="#f32950"/>
+      <stop offset="1" stop-color="#f32950"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(16 11) scale(1.13)">
+    <path d="M15 34C24 24 40 15 53 9Q66 2 80 10L101 23Q121 35 121 55V83Q121 102 104 112L80 126Q66 134 52 128L28 115Q20 110 15 104" fill="none" stroke="url(#logo)" stroke-width="8"/>
+    <text x="7" y="62" fill="#0066ad" font-size="30" font-weight="750" font-family="Arial, sans-serif">гос</text>
+    <text x="7" y="88" fill="#f32950" font-size="30" font-weight="750" font-family="Arial, sans-serif" letter-spacing="-1">услуги</text>
+  </g>
+</svg>

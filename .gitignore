@@ -1,0 +1,9 @@
+.screenshots/
+before-passport.png
+site-mobile.zip
+verify-mobile.cjs
+node_modules/
+github-publish.cjs
+github-connection-check.cjs
+.DS_Store
+Thumbs.db
